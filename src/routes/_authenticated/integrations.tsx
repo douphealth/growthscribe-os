@@ -132,7 +132,7 @@ function IntegrationsPage() {
   });
 
   const sites = sitesQ.data ?? [];
-  const connections = connectionsQ.data ?? [];
+  const connections = useMemo(() => connectionsQ.data ?? [], [connectionsQ.data]);
   const connBySite = useMemo(() => {
     const m = new Map<string, Connection>();
     for (const c of connections) if (c.site_id) m.set(c.site_id, c);
@@ -252,7 +252,9 @@ function IntegrationsPage() {
       await saveGa4({
         data: { organizationId: orgId, siteId: ga4SiteId, propertyId: ga4Property.trim() },
       });
-      toast.success("GA4 linked");
+      toast.success("GA4 property saved", {
+        description: "Configuration recorded. API ingestion is not verified yet.",
+      });
       setGa4Property("");
       qc.invalidateQueries({ queryKey: ["sites", orgId] });
     } catch (err) {
@@ -518,7 +520,8 @@ function IntegrationsPage() {
               <BarChart3 className="h-4 w-4" /> Google Analytics 4
             </CardTitle>
             <CardDescription>
-              Save your GA4 property ID (digits only, e.g. <code>123456789</code>).
+              Save the GA4 property ID (digits only, e.g. <code>123456789</code>). This records the
+              mapping only; it does not claim Analytics Data API access or imported metrics.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -536,7 +539,7 @@ function IntegrationsPage() {
                       {sites.map((s) => (
                         <SelectItem key={s.id} value={s.id}>
                           {s.name}
-                          {s.ga4_property_id ? " · linked" : ""}
+                          {s.ga4_property_id ? " · configured" : ""}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -553,7 +556,7 @@ function IntegrationsPage() {
                   />
                 </div>
                 <Button type="submit" disabled={ga4Busy}>
-                  {ga4Busy ? "Saving…" : "Link GA4"}
+                  {ga4Busy ? "Saving…" : "Save GA4 configuration"}
                 </Button>
               </form>
             )}
