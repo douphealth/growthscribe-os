@@ -1,3 +1,4 @@
+// Phase 3 reconciliation marker: verifies tenancy, canonicalization, and queue-only operations.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 

@@ -1,4 +1,4 @@
--- Phase 3: membership-scoped portfolio control plane.
+-- Phase 3: membership-scoped portfolio control plane (Lovable reconciliation marker).
 --
 -- This function is intentionally SECURITY INVOKER. It aggregates only rows the
 -- authenticated caller can already read through RLS and additionally anchors

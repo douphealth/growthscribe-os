@@ -1,3 +1,4 @@
+// Phase 3 reconciliation marker: portfolio-first navigation across separate organizations.
 import { Link, useLocation } from "@tanstack/react-router";
 import {
   LayoutDashboard,

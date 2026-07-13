@@ -1,3 +1,4 @@
+// Phase 3 reconciliation marker: ensures Lovable imports the complete control-plane module.
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

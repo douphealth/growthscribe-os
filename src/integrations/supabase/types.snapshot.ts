@@ -1,3 +1,4 @@
+// Phase 3 reconciliation marker: includes get_portfolio_control_plane RPC typing.
 export type Json =
   | string
   | number

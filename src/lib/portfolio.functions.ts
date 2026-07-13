@@ -1,3 +1,4 @@
+// Phase 3 reconciliation marker: membership-scoped portfolio reads and queued GSC operations.
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
