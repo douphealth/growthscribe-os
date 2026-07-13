@@ -159,3 +159,4 @@ export const syncPortfolioGsc = createServerFn({ method: "POST" })
       window,
     };
   });
+// Lovable contents reconciliation: portfolio server-function contract.
