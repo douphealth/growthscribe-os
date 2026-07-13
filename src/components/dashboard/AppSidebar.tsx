@@ -216,3 +216,4 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+// Lovable contents reconciliation: portfolio navigation activation.
