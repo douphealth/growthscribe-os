@@ -49,7 +49,7 @@ describe("portfolio reliability", () => {
     expect(result.readiness).toBe("ready");
     expect(result.gscEvidence).toBe("verified");
     expect(result.ga4Evidence).toBe("configured");
-    expect(result.score).toBe(100);
+    expect(result.score).toBe(90);
     expect(result.reasons).toContain(
       "GA4 property is saved; ingestion evidence is not available in this snapshot",
     );

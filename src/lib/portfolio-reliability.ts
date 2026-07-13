@@ -82,14 +82,15 @@ export function assessSiteReliability(site: PortfolioSite, now = new Date()): Si
   }
 
   const wordpressEvidence: EvidenceState = site.wordpressConnected ? "configured" : "missing";
-  if (site.wordpressConnected) score += 10;
-  else reasons.push("WordPress management is not configured");
+  if (site.wordpressConnected) {
+    score += 5;
+    reasons.push("WordPress is configured; freshness evidence is not available in this snapshot");
+  } else reasons.push("WordPress management is not configured");
 
   // The current portfolio RPC exposes a GA4 connection row, but no imported
   // metric date or API probe. Calling this verified would overstate evidence.
   const ga4Evidence: EvidenceState = site.ga4Connected ? "configured" : "missing";
   if (site.ga4Connected) {
-    score += 5;
     reasons.push("GA4 property is saved; ingestion evidence is not available in this snapshot");
   } else {
     reasons.push("GA4 management data is not configured");
