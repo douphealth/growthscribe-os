@@ -103,3 +103,5 @@ Proprietary — © GrowthScribe. All rights reserved.
 ## Portfolio Control Plane
 
 Phase 3 is deployed from `main`: membership-scoped portfolio aggregation, canonical-domain reporting, operational health, and queued GSC management across all managed organizations.
+
+Lovable reconciliation checkpoint: all Phase 3 runtime and schema files are present on `main` through post-connection Contents API commits; checkpoint source `d0d22fd69a56757744fb9b7eb4838e45684066ed`.
