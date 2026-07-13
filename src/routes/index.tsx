@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Enterprise AI command center for SEO, AEO/GEO, topical authority, and editorial workflows. Built for WordPress publishers, affiliate marketers, and SEO teams.",
+          "Portfolio operations control plane for verified Search Console evidence, WordPress workflows, SEO planning, and human-approved execution.",
       },
       { property: "og:title", content: "GrowthScribe OS — AI Growth Command Center" },
       {
@@ -51,8 +51,8 @@ const features = [
   },
   {
     icon: BarChart3,
-    title: "Unified GSC + GA4",
-    desc: "Clicks, impressions, revenue, and rankings — one executive dashboard.",
+    title: "Verified GSC + Data Trust",
+    desc: "Clicks, impressions, freshness SLAs, ingestion failures, and evidence quality in one portfolio view.",
   },
   {
     icon: ListTodo,
@@ -117,8 +117,8 @@ function Landing() {
           </h1>
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Rank, earn, and grow without mass-publishing low-quality AI content. GrowthScribe OS
-            turns GSC, GA4, and your WordPress library into prioritized growth actions — with human
-            approval before anything ships.
+            turns verified GSC evidence and your WordPress library into prioritized growth actions —
+            with human approval before anything ships.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button
@@ -142,7 +142,7 @@ function Landing() {
               <Check className="h-3.5 w-3.5 text-primary" /> Role-based access
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-primary" /> SOC-style audit logs
+              <Check className="h-3.5 w-3.5 text-primary" /> Membership-scoped audit logs
             </span>
           </div>
         </div>
@@ -190,7 +190,7 @@ function Landing() {
               {
                 n: "01",
                 t: "Connect",
-                d: "Plug in WordPress, Google Search Console, and GA4 in minutes.",
+                d: "Connect WordPress and Search Console; record GA4 mappings with explicit verification states.",
               },
               {
                 n: "02",
