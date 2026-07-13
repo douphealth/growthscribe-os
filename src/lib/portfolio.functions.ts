@@ -79,7 +79,7 @@ const portfolioInput = z.object({
 
 export const getPortfolioControlPlane = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator(portfolioInput)
+  .inputValidator((input) => portfolioInput.parse(input))
   .handler(async ({ data, context }) => {
     const { data: snapshot, error } = await context.supabase.rpc("get_portfolio_control_plane", {
       p_window_days: data.days,
@@ -90,7 +90,7 @@ export const getPortfolioControlPlane = createServerFn({ method: "POST" })
 
 export const syncPortfolioGsc = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator(portfolioInput)
+  .inputValidator((input) => portfolioInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: memberships, error: membershipError } = await supabase

@@ -17,6 +17,10 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # PR workflows check out a synthetic merge commit. Full history keeps
+          # the base merge point available to the changed-file formatting gate.
+          fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
         with:
