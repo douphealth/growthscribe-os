@@ -32,6 +32,12 @@ import {
   type PortfolioSite,
 } from "@/lib/portfolio.functions";
 import { pullSearchConsole } from "@/lib/integrations.functions";
+import {
+  assessSiteReliability,
+  summarizeReliability,
+  type DecisionReadiness,
+  type EvidenceState,
+} from "@/lib/portfolio-reliability";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -89,40 +95,36 @@ function freshness(value: string | null) {
   return formatDistanceToNow(new Date(value), { addSuffix: true });
 }
 
-function StateBadge({ state }: { state: PortfolioSite["operationalState"] }) {
-  const styles = {
-    healthy: "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-    attention: "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300",
-    stale: "border-orange-500/20 bg-orange-500/10 text-orange-700 dark:text-orange-300",
-    critical: "border-destructive/20 bg-destructive/10 text-destructive",
-  }[state];
-  return (
-    <Badge variant="outline" className={styles}>
-      <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-current" />
-      {state}
-    </Badge>
-  );
-}
-
-function IntegrationDot({ active, label }: { active: boolean; label: string }) {
+function EvidenceDot({ state, label }: { state: EvidenceState; label: string }) {
+  const styles: Record<EvidenceState, string> = {
+    verified: "text-emerald-700 dark:text-emerald-300",
+    configured: "text-blue-700 dark:text-blue-300",
+    degraded: "text-amber-700 dark:text-amber-300",
+    missing: "text-muted-foreground",
+  };
   return (
     <span
-      className={
-        active
-          ? "inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-300"
-          : "inline-flex items-center gap-1 text-[11px] text-muted-foreground"
-      }
-      title={`${label}: ${active ? "connected" : "not connected"}`}
+      className={`inline-flex items-center gap-1 text-[11px] font-medium ${styles[state]}`}
+      title={`${label}: ${state}`}
     >
       <span
-        className={
-          active
-            ? "h-1.5 w-1.5 rounded-full bg-emerald-500"
-            : "h-1.5 w-1.5 rounded-full bg-muted-foreground/40"
-        }
+        className={`h-1.5 w-1.5 rounded-full bg-current ${state === "missing" ? "opacity-40" : ""}`}
       />
       {label}
     </span>
+  );
+}
+
+function ReliabilityBadge({ readiness }: { readiness: DecisionReadiness }) {
+  const styles: Record<DecisionReadiness, string> = {
+    ready: "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+    limited: "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+    blocked: "border-destructive/20 bg-destructive/10 text-destructive",
+  };
+  return (
+    <Badge variant="outline" className={styles[readiness]}>
+      {readiness}
+    </Badge>
   );
 }
 
@@ -184,19 +186,6 @@ function MetricCard({
   );
 }
 
-function issueFor(site: PortfolioSite) {
-  if (site.gscStatus !== "connected") return "Connect Search Console";
-  if (site.gscLastError) return "Resolve Search Console error";
-  if (!site.latestDataDate) return "Run first Search Console import";
-  if (site.operationalState === "stale") return "Refresh stale Search Console data";
-  if (site.failedJobs7d > 0)
-    return `${site.failedJobs7d} failed job${site.failedJobs7d === 1 ? "" : "s"}`;
-  if (site.pendingApprovals > 0)
-    return `${site.pendingApprovals} approval${site.pendingApprovals === 1 ? "" : "s"} waiting`;
-  if (site.openTasks > 0) return `${site.openTasks} open task${site.openTasks === 1 ? "" : "s"}`;
-  return "Operating normally";
-}
-
 export function PortfolioControlPlane() {
   const { user } = useAuth();
   const { setCurrentOrgId } = useOrg();
@@ -221,10 +210,20 @@ export function PortfolioControlPlane() {
       (query.state.data?.summary.activeJobs ?? 0) > 0 ? 15_000 : 120_000,
   });
 
+  const assessments = useMemo(
+    () =>
+      new Map(
+        (portfolio.data?.sites ?? []).map((site) => [site.siteId, assessSiteReliability(site)]),
+      ),
+    [portfolio.data?.sites],
+  );
+
   const sites = useMemo(() => {
     const query = search.trim().toLowerCase();
     return [...(portfolio.data?.sites ?? [])]
-      .filter((site) => (stateFilter === "all" ? true : site.operationalState === stateFilter))
+      .filter((site) =>
+        stateFilter === "all" ? true : assessments.get(site.siteId)?.readiness === stateFilter,
+      )
       .filter((site) =>
         query
           ? [site.name, site.domain, site.organizationName].some((value) =>
@@ -239,20 +238,28 @@ export function PortfolioControlPlane() {
           return (a.latestDataDate ?? "").localeCompare(b.latestDataDate ?? "");
         }
         return (
-          stateOrder[a.operationalState] - stateOrder[b.operationalState] || b.clicks - a.clicks
+          (assessments.get(b.siteId)?.priority ?? 0) - (assessments.get(a.siteId)?.priority ?? 0) ||
+          stateOrder[a.operationalState] - stateOrder[b.operationalState] ||
+          b.clicks - a.clicks
         );
       });
-  }, [portfolio.data?.sites, search, sort, stateFilter]);
+  }, [assessments, portfolio.data?.sites, search, sort, stateFilter]);
 
   const prioritySites = useMemo(
     () =>
       (portfolio.data?.sites ?? [])
+        .map((site) => ({ site, reliability: assessments.get(site.siteId)! }))
         .filter(
-          (site) =>
-            site.operationalState !== "healthy" || site.pendingApprovals > 0 || site.openTasks > 0,
+          ({ site, reliability }) =>
+            reliability.readiness !== "ready" ||
+            site.pendingApprovals > 0 ||
+            site.openTasks > 0 ||
+            !site.wordpressConnected ||
+            !site.ga4Connected,
         )
+        .sort((a, b) => b.reliability.priority - a.reliability.priority)
         .slice(0, 6),
-    [portfolio.data?.sites],
+    [assessments, portfolio.data?.sites],
   );
 
   const openWorkspace = (
@@ -285,23 +292,12 @@ export function PortfolioControlPlane() {
   };
 
   const handlePriorityAction = (site: PortfolioSite) => {
-    if (site.gscStatus !== "connected" || site.gscLastError || site.failedJobs7d > 0) {
-      openWorkspace(site, "/integrations");
-      return;
-    }
-    if (site.operationalState === "stale" || !site.latestDataDate) {
+    const action = assessments.get(site.siteId)?.primaryAction;
+    if (action?.kind === "sync") {
       void handleSyncOne(site);
       return;
     }
-    if (site.pendingApprovals > 0) {
-      openWorkspace(site, "/approvals");
-      return;
-    }
-    if (site.openTasks > 0) {
-      openWorkspace(site, "/tasks");
-      return;
-    }
-    openWorkspace(site);
+    openWorkspace(site, action?.destination ?? "/sites");
   };
 
   const handleSyncAll = async () => {
@@ -344,6 +340,7 @@ export function PortfolioControlPlane() {
 
   const summary = portfolio.data?.summary;
   const trend = portfolio.data?.trend ?? [];
+  const reliabilitySummary = summarizeReliability(portfolio.data?.sites ?? []);
 
   return (
     <>
@@ -416,9 +413,9 @@ export function PortfolioControlPlane() {
             />
             <MetricCard
               icon={CheckCircle2}
-              label="Operational health"
-              value={`${summary.healthySites}/${summary.managedSites}`}
-              helper={`${summary.sitesNeedingAttention} need attention`}
+              label="Decision-ready data"
+              value={`${reliabilitySummary.ready}/${summary.managedSites}`}
+              helper={`${reliabilitySummary.averageScore}% average data trust`}
             />
             <MetricCard
               icon={Activity}
@@ -428,13 +425,16 @@ export function PortfolioControlPlane() {
             />
           </div>
 
-          {summary.sitesNeedingAttention > 0 && (
+          {reliabilitySummary.blocked + reliabilitySummary.limited > 0 && (
             <Alert className="border-amber-500/25 bg-amber-500/5">
               <AlertTriangle className="h-4 w-4 text-amber-600" />
-              <AlertTitle>Action required on {summary.sitesNeedingAttention} sites</AlertTitle>
+              <AlertTitle>
+                Evidence gate: {reliabilitySummary.blocked} blocked · {reliabilitySummary.limited}{" "}
+                limited
+              </AlertTitle>
               <AlertDescription>
-                The priority queue below is ordered by severity. Stale data means more than four
-                days of GSC reporting lag or more than 36 hours since the last successful pull.
+                Portfolio decisions should use only sites marked ready. A saved provider ID is
+                treated as configured, not verified, until fresh ingestion telemetry exists.
               </AlertDescription>
             </Alert>
           )}
@@ -449,7 +449,7 @@ export function PortfolioControlPlane() {
                     {formatDate(summary.latestDataDate)}
                   </p>
                 </div>
-                <Badge variant="secondary">Live DB</Badge>
+                <Badge variant="secondary">Verified GSC evidence</Badge>
               </CardHeader>
               <CardContent>
                 {trend.length ? (
@@ -530,20 +530,20 @@ export function PortfolioControlPlane() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {prioritySites.length ? (
-                  prioritySites.map((site) => (
+                  prioritySites.map(({ site, reliability }) => (
                     <div key={site.siteId} className="rounded-lg border bg-muted/20 p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <StateBadge state={site.operationalState} />
-                            {site.alertCount > 0 && (
-                              <span className="text-[11px] text-muted-foreground">
-                                {site.alertCount} alerts
-                              </span>
-                            )}
+                            <ReliabilityBadge readiness={reliability.readiness} />
+                            <span className="text-[11px] font-medium text-muted-foreground">
+                              Trust {reliability.score}/100
+                            </span>
                           </div>
                           <p className="mt-2 truncate text-sm font-semibold">{site.domain}</p>
-                          <p className="mt-0.5 text-xs text-muted-foreground">{issueFor(site)}</p>
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            {reliability.primaryAction.label}
+                          </p>
                         </div>
                         <Button
                           size="sm"
@@ -598,11 +598,10 @@ export function PortfolioControlPlane() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All states</SelectItem>
-                      <SelectItem value="critical">Critical</SelectItem>
-                      <SelectItem value="stale">Stale</SelectItem>
-                      <SelectItem value="attention">Attention</SelectItem>
-                      <SelectItem value="healthy">Healthy</SelectItem>
+                      <SelectItem value="all">All evidence</SelectItem>
+                      <SelectItem value="blocked">Blocked</SelectItem>
+                      <SelectItem value="limited">Limited</SelectItem>
+                      <SelectItem value="ready">Ready</SelectItem>
                     </SelectContent>
                   </Select>
                   <Select value={sort} onValueChange={setSort}>
@@ -624,8 +623,8 @@ export function PortfolioControlPlane() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="pl-6">Website / organization</TableHead>
-                    <TableHead>State</TableHead>
-                    <TableHead>Integrations</TableHead>
+                    <TableHead>Trust / state</TableHead>
+                    <TableHead>Provider evidence</TableHead>
                     <TableHead className="text-right">Clicks</TableHead>
                     <TableHead className="text-right">Impressions</TableHead>
                     <TableHead className="text-right">CTR / Position</TableHead>
@@ -635,93 +634,94 @@ export function PortfolioControlPlane() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sites.map((site) => (
-                    <TableRow key={site.siteId}>
-                      <TableCell className="pl-6 py-4">
-                        <div className="min-w-[190px]">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-semibold">{site.domain}</span>
-                            <a
-                              href={site.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-muted-foreground hover:text-primary"
-                              title="Open website"
-                            >
-                              <ExternalLink className="h-3.5 w-3.5" />
-                            </a>
+                  {sites.map((site) => {
+                    const reliability = assessments.get(site.siteId)!;
+                    return (
+                      <TableRow key={site.siteId}>
+                        <TableCell className="pl-6 py-4">
+                          <div className="min-w-[190px]">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-semibold">{site.domain}</span>
+                              <a
+                                href={site.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-muted-foreground hover:text-primary"
+                                title="Open website"
+                              >
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              </a>
+                            </div>
+                            <p className="mt-1 max-w-[220px] truncate text-[11px] text-muted-foreground">
+                              {site.organizationName}
+                            </p>
                           </div>
-                          <p className="mt-1 max-w-[220px] truncate text-[11px] text-muted-foreground">
-                            {site.organizationName}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <StateBadge state={site.operationalState} />
-                        {site.alertCount > 0 && (
+                        </TableCell>
+                        <TableCell>
+                          <ReliabilityBadge readiness={reliability.readiness} />
                           <p className="mt-1 text-[10px] text-muted-foreground">
-                            {site.alertCount} alerts
+                            {reliability.score}/100 · {site.operationalState}
                           </p>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex min-w-[130px] flex-wrap gap-x-2 gap-y-1">
-                          <IntegrationDot active={site.gscStatus === "connected"} label="GSC" />
-                          <IntegrationDot active={site.wordpressConnected} label="WP" />
-                          <IntegrationDot active={site.ga4Connected} label="GA4" />
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <p className="font-semibold tabular-nums">{formatNumber(site.clicks)}</p>
-                        <Trend value={site.clickGrowthPct} />
-                      </TableCell>
-                      <TableCell className="text-right font-medium tabular-nums">
-                        {formatNumber(site.impressions)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <p className="font-medium tabular-nums">{site.ctr?.toFixed(2) ?? "—"}%</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          Pos. {site.averagePosition?.toFixed(1) ?? "—"}
-                        </p>
-                      </TableCell>
-                      <TableCell>
-                        <div className="min-w-[130px]">
-                          <p className="text-xs font-medium">{formatDate(site.latestDataDate)}</p>
-                          <p className="mt-0.5 text-[10px] text-muted-foreground">
-                            Synced {freshness(site.gscLastSyncedAt)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex min-w-[150px] flex-wrap gap-x-2 gap-y-1">
+                            <EvidenceDot state={reliability.gscEvidence} label="GSC" />
+                            <EvidenceDot state={reliability.wordpressEvidence} label="WP" />
+                            <EvidenceDot state={reliability.ga4Evidence} label="GA4" />
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <p className="font-semibold tabular-nums">{formatNumber(site.clicks)}</p>
+                          <Trend value={site.clickGrowthPct} />
+                        </TableCell>
+                        <TableCell className="text-right font-medium tabular-nums">
+                          {formatNumber(site.impressions)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <p className="font-medium tabular-nums">{site.ctr?.toFixed(2) ?? "—"}%</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            Pos. {site.averagePosition?.toFixed(1) ?? "—"}
                           </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="min-w-[110px] text-xs">
-                          <p>{site.openTasks} tasks</p>
-                          <p className="text-muted-foreground">
-                            {site.pendingApprovals} approvals · {site.activeJobs} jobs
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="pr-6 text-right">
-                        <div className="flex justify-end gap-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleSyncOne(site)}
-                            disabled={syncingSite === site.siteId}
-                          >
-                            {syncingSite === site.siteId ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <RefreshCw className="h-3.5 w-3.5" />
-                            )}
-                            <span className="sr-only">Sync {site.domain}</span>
-                          </Button>
-                          <Button size="sm" onClick={() => openWorkspace(site)}>
-                            Manage <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                        <TableCell>
+                          <div className="min-w-[130px]">
+                            <p className="text-xs font-medium">{formatDate(site.latestDataDate)}</p>
+                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                              Synced {freshness(site.gscLastSyncedAt)}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="min-w-[110px] text-xs">
+                            <p>{site.openTasks} tasks</p>
+                            <p className="text-muted-foreground">
+                              {site.pendingApprovals} approvals · {site.activeJobs} jobs
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell className="pr-6 text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleSyncOne(site)}
+                              disabled={syncingSite === site.siteId}
+                            >
+                              {syncingSite === site.siteId ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <RefreshCw className="h-3.5 w-3.5" />
+                              )}
+                              <span className="sr-only">Sync {site.domain}</span>
+                            </Button>
+                            <Button size="sm" onClick={() => openWorkspace(site)}>
+                              Manage <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                   {sites.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={9} className="h-32 text-center text-muted-foreground">
@@ -743,22 +743,17 @@ export function PortfolioControlPlane() {
                 <p className="mt-2 max-w-3xl text-xs leading-relaxed text-muted-foreground">
                   Performance windows are anchored to each site's latest available GSC date, so
                   normal reporting lag does not distort comparisons. Portfolio charts use actual
-                  calendar dates. Access is membership-scoped and every management action preserves
-                  the site's organization boundary.
+                  calendar dates. “Verified” requires fresh imported evidence; WordPress and GA4
+                  remain “configured” until their own ingestion telemetry is available. Access is
+                  membership-scoped and every action preserves the site's organization boundary.
                 </p>
               </div>
               <div className="min-w-56">
                 <div className="mb-2 flex items-center justify-between text-xs">
-                  <span>GSC coverage</span>
-                  <span className="font-semibold">
-                    {summary.connectedGsc}/{summary.managedSites}
-                  </span>
+                  <span>Portfolio data trust</span>
+                  <span className="font-semibold">{reliabilitySummary.averageScore}/100</span>
                 </div>
-                <Progress
-                  value={
-                    summary.managedSites ? (summary.connectedGsc / summary.managedSites) * 100 : 0
-                  }
-                />
+                <Progress value={reliabilitySummary.averageScore} />
               </div>
             </CardContent>
           </Card>
@@ -767,4 +762,3 @@ export function PortfolioControlPlane() {
     </>
   );
 }
-// Lovable contents reconciliation: Portfolio Control Plane runtime module.
