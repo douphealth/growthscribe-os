@@ -20,12 +20,27 @@ export function isLovableHostedOrigin(origin: string) {
   return new URL(origin).hostname.endsWith(".lovable.app");
 }
 
+export function isGoogleSignInAvailable(
+  origin: string,
+  externalOAuthEnabled = import.meta.env.VITE_EXTERNAL_GOOGLE_OAUTH_ENABLED === "true",
+) {
+  return isLovableHostedOrigin(origin) || externalOAuthEnabled;
+}
+
 export async function signInWithGoogle(origin: string) {
   if (isLovableHostedOrigin(origin)) {
     const result = await lovable.auth.signInWithOAuth(GOOGLE_OAUTH_PROVIDER, {
       redirect_uri: oauthRedirectUrl(origin),
     });
     return { error: result.error };
+  }
+
+  if (!isGoogleSignInAvailable(origin)) {
+    return {
+      error: new Error(
+        "Google sign-in is not configured for this deployment yet. Use email and password for now.",
+      ),
+    };
   }
 
   const { error } = await supabase.auth.signInWithOAuth(googleOAuthOptions(origin));
