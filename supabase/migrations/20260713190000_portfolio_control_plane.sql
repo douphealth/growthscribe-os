@@ -345,3 +345,4 @@ $$;
 
 REVOKE ALL ON FUNCTION public.get_portfolio_control_plane(integer) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_portfolio_control_plane(integer) TO authenticated;
+-- Lovable contents reconciliation: apply membership-scoped portfolio RPC.
