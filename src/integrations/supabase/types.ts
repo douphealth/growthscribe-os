@@ -2317,3 +2317,4 @@ export const Constants = {
     },
   },
 } as const
+// Lovable contents reconciliation: portfolio RPC generated type.
