@@ -1,30 +1,27 @@
 import { lovable } from "@/integrations/lovable";
-import { supabase } from "@/integrations/supabase/client";
 
 export const GOOGLE_OAUTH_PROVIDER = "google" as const;
+export const LOVABLE_PREVIEW_ORIGIN = "https://preview--growthscribe-os.lovable.app";
 
 export function oauthRedirectUrl(origin: string) {
   return new URL("/dashboard", origin).toString();
-}
-
-export function googleOAuthOptions(origin: string) {
-  return {
-    provider: GOOGLE_OAUTH_PROVIDER,
-    options: {
-      redirectTo: oauthRedirectUrl(origin),
-    },
-  } as const;
 }
 
 export function isLovableHostedOrigin(origin: string) {
   return new URL(origin).hostname.endsWith(".lovable.app");
 }
 
-export function isGoogleSignInAvailable(
-  origin: string,
-  externalOAuthEnabled = import.meta.env.VITE_EXTERNAL_GOOGLE_OAUTH_ENABLED === "true",
-) {
-  return isLovableHostedOrigin(origin) || externalOAuthEnabled;
+export function externalGoogleOAuthUrl(state: string, previewOrigin = LOVABLE_PREVIEW_ORIGIN) {
+  const url = new URL("/~oauth/initiate", previewOrigin);
+  url.searchParams.set("provider", GOOGLE_OAUTH_PROVIDER);
+  url.searchParams.set("redirect_uri", oauthRedirectUrl(previewOrigin));
+  url.searchParams.set("state", state);
+  return url.toString();
+}
+
+function oauthState() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 export async function signInWithGoogle(origin: string) {
@@ -35,14 +32,6 @@ export async function signInWithGoogle(origin: string) {
     return { error: result.error };
   }
 
-  if (!isGoogleSignInAvailable(origin)) {
-    return {
-      error: new Error(
-        "Google sign-in is not configured for this deployment yet. Use email and password for now.",
-      ),
-    };
-  }
-
-  const { error } = await supabase.auth.signInWithOAuth(googleOAuthOptions(origin));
-  return { error };
+  window.location.assign(externalGoogleOAuthUrl(oauthState()));
+  return { error: null };
 }
