@@ -25,10 +25,12 @@ export const Route = createFileRoute("/_authenticated/ai-visibility")({
 });
 
 const ENGINE_LABEL: Record<string, string> = {
-  gpt: "ChatGPT",
-  gemini: "Gemini",
-  perplexity: "Perplexity",
+  gpt: "GPT model simulation",
+  gemini: "Gemini model simulation",
+  perplexity: "Legacy Gemini proxy (not Perplexity)",
 };
+
+const CURRENT_ENGINES = ["gpt", "gemini"] as const;
 
 function Page() {
   const { currentOrg } = useOrg();
@@ -64,8 +66,8 @@ function Page() {
 
   const coverage = useMemo(() => {
     const by = listQ.data?.byEngine ?? {};
-    const total = Object.values(by).reduce((s, v) => s + v.total, 0);
-    const hits = Object.values(by).reduce((s, v) => s + v.hits, 0);
+    const total = CURRENT_ENGINES.reduce((sum, engine) => sum + (by[engine]?.total ?? 0), 0);
+    const hits = CURRENT_ENGINES.reduce((sum, engine) => sum + (by[engine]?.hits ?? 0), 0);
     return { total, hits, pct: total ? Math.round((hits / total) * 100) : 0 };
   }, [listQ.data]);
 
@@ -87,10 +89,10 @@ function Page() {
           organizationId: orgId,
           siteId: effectiveSite,
           queries: list,
-          engines: ["gpt", "gemini", "perplexity"],
+          engines: [...CURRENT_ENGINES],
         },
       });
-      toast.success(`Tested ${res.total} prompts • ${res.hits} mentions`);
+      toast.success(`Simulated ${res.total} model responses • ${res.hits} mentions`);
       await listQ.refetch();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Run failed");
@@ -104,8 +106,8 @@ function Page() {
   return (
     <>
       <PageHeader
-        title="AI Visibility"
-        description="Test how often your site appears across ChatGPT, Gemini, and Perplexity for your target prompts."
+        title="AI Response Lab"
+        description="Experimental model-response scenarios for prompt research. These are not live ChatGPT, Gemini, Perplexity, ranking, or citation measurements."
         actions={
           <Select value={effectiveSite} onValueChange={setSiteId}>
             <SelectTrigger className="w-64">
@@ -124,30 +126,28 @@ function Page() {
 
       <div className="grid gap-4 md:grid-cols-3 mb-4">
         <StatCard
-          label="Coverage"
+          label="Scenario mention rate"
           value={`${coverage.pct}%`}
           sub={`${coverage.hits}/${coverage.total} mentions`}
         />
-        {(["gpt", "gemini", "perplexity"] as const)
-          .map((e) => {
-            const v = listQ.data?.byEngine?.[e] ?? { total: 0, hits: 0 };
-            const pct = v.total ? Math.round((v.hits / v.total) * 100) : 0;
-            return (
-              <StatCard
-                key={e}
-                label={ENGINE_LABEL[e]}
-                value={`${pct}%`}
-                sub={`${v.hits}/${v.total}`}
-              />
-            );
-          })
-          .slice(0, 2)}
+        {CURRENT_ENGINES.map((e) => {
+          const v = listQ.data?.byEngine?.[e] ?? { total: 0, hits: 0 };
+          const pct = v.total ? Math.round((v.hits / v.total) * 100) : 0;
+          return (
+            <StatCard
+              key={e}
+              label={ENGINE_LABEL[e]}
+              value={`${pct}%`}
+              sub={`${v.hits}/${v.total}`}
+            />
+          );
+        }).slice(0, 2)}
       </div>
 
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Sparkles className="h-4 w-4 text-primary" /> Run a visibility test
+            <Sparkles className="h-4 w-4 text-primary" /> Run a model-response scenario
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -159,11 +159,11 @@ function Page() {
           />
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
-              One prompt per line. Up to 10 prompts × 3 engines per run.
+              One prompt per line. Up to 10 prompts × 2 disclosed model simulations per run.
             </p>
             <Button onClick={onRun} disabled={running || !effectiveSite}>
               <Play className="h-4 w-4 mr-2" />
-              {running ? "Running..." : "Run test"}
+              {running ? "Running..." : "Run simulations"}
             </Button>
           </div>
         </CardContent>
@@ -172,15 +172,15 @@ function Page() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Bot className="h-4 w-4 text-primary" /> Recent results
+            <Bot className="h-4 w-4 text-primary" /> Recent simulation results
           </CardTitle>
         </CardHeader>
         <CardContent>
           {(listQ.data?.rows ?? []).length === 0 ? (
             <EmptyState
               icon={Bot}
-              title="No tests yet"
-              description="Add prompts above and run your first AI visibility test."
+              title="No scenarios yet"
+              description="Add prompts above and run your first model-response scenario."
             />
           ) : (
             <div className="divide-y">
@@ -197,7 +197,7 @@ function Page() {
                   </div>
                   {r.appears ? (
                     <Badge className="bg-emerald-500/15 text-emerald-700 border-emerald-500/30">
-                      Mentioned{r.rank ? ` · #${r.rank}` : ""}
+                      Mentioned{r.rank ? ` · source slot ${r.rank}` : ""}
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="text-muted-foreground">

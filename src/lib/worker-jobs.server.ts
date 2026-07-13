@@ -177,14 +177,6 @@ async function* paginateWp(
   }
 }
 
-function hostOf(u: string) {
-  try {
-    return new URL(u).hostname.replace(/^www\./, "").toLowerCase();
-  } catch {
-    return u.replace(/^www\./, "").toLowerCase();
-  }
-}
-
 // ---------- job: wp_verify ----------
 
 export async function runWpVerify(admin: Admin, job: JobRow) {
@@ -512,82 +504,12 @@ export async function runBriefGenerate(admin: Admin, job: JobRow) {
 
 // ---------- job: ai_visibility ----------
 
-const ENGINE_MODELS: Record<string, string> = {
-  gpt: "openai/gpt-5-mini",
-  chatgpt: "openai/gpt-5-mini",
-  gemini: "google/gemini-2.5-flash",
-  google_aio: "google/gemini-2.5-flash",
-  perplexity: "google/gemini-2.5-pro",
-  claude: "openai/gpt-5-mini",
-};
-
-const AIV_SYS = `You are simulating a search-style answer engine. Given a user query, respond with the answer you would naturally produce, including sources or citations (URLs, brand names). Always end with a "Sources:" line listing 3-7 distinct domains (one per line, format: domain - short reason). If none, "Sources: none".`;
-
 export async function runAiVisibility(admin: Admin, job: JobRow) {
-  if (!job.site_id) throw new Error("ai_visibility requires site_id");
-  const payload = (job.payload ?? {}) as { query?: string; engine?: string };
-  if (!payload.query || !payload.engine) throw new Error("ai_visibility requires query+engine");
-  const model = ENGINE_MODELS[payload.engine] ?? "google/gemini-2.5-flash";
-
-  const { data: site } = await admin
-    .from("sites")
-    .select("url")
-    .eq("id", job.site_id)
-    .maybeSingle();
-  const siteHost = site?.url ? hostOf(site.url) : "";
-
-  const apiKey = process.env.LOVABLE_API_KEY;
-  if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: "system", content: AIV_SYS },
-        { role: "user", content: payload.query },
-      ],
-    }),
-  });
-  if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    throw new Error(`Gateway ${res.status}: ${txt.slice(0, 200)}`);
-  }
-  const j = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-  const content = j.choices?.[0]?.message?.content ?? "";
-
-  const lower = content.toLowerCase();
-  const root = siteHost.split(".").slice(-2).join(".");
-  const appears = root ? lower.includes(root) : false;
-  const urls = Array.from(content.matchAll(/https?:\/\/[^\s)\]]+/gi)).map((m) => m[0]);
-  const citation = root ? (urls.find((u) => hostOf(u).endsWith(root)) ?? null) : null;
-  let rank: number | null = null;
-  const srcIdx = lower.lastIndexOf("sources:");
-  if (appears && srcIdx >= 0 && root) {
-    const lines = content
-      .slice(srcIdx)
-      .split(/\r?\n/)
-      .slice(1)
-      .map((l) => l.trim())
-      .filter(Boolean);
-    const idx = lines.findIndex((l) => l.toLowerCase().includes(root));
-    if (idx >= 0) rank = idx + 1;
-  }
-
-  await admin.from("ai_visibility_tests").insert({
-    organization_id: job.organization_id,
-    site_id: job.site_id,
-    query: payload.query,
-    engine: payload.engine,
-    appears,
-    rank,
-    citation_url: citation,
-    raw_response: { content } as Json,
-  });
-  await recordUsage(admin, job, "ai_visibility.probe", 1, {
-    engine: payload.engine,
-  });
-  return { appears, rank, citation };
+  void admin;
+  void job;
+  throw new Error(
+    "Legacy AI visibility jobs are disabled: model proxies are not valid live-engine observations",
+  );
 }
 
 // ---------- jobs: gsc.pull / ga4_import ----------
@@ -606,7 +528,9 @@ export async function runGa4Import(admin: Admin, job: JobRow) {
   if (!conn || conn.status !== "connected") {
     throw new Error("Google Analytics 4 connector not connected for this site");
   }
-  return { ok: true, note: "GA4 ingestion pending connector wiring" };
+  throw new Error(
+    "GA4 metric ingestion is disabled: Analytics Data API access has not been verified for this integration",
+  );
 }
 
 // ---------- jobs: vitals.refresh (PageSpeed Insights) ----------

@@ -69,7 +69,12 @@ describe("wordpress_posts generated types", () => {
     expect(Object.keys(_shape).sort()).toEqual([...REQUIRED_COLUMNS].sort());
   });
 
-  it("matches the live REST payload shape (when SUPABASE creds are set)", async () => {
+  it("matches the live REST payload shape (when explicitly enabled)", async () => {
+    if (process.env.RUN_LIVE_SUPABASE_SCHEMA_CHECK !== "true") {
+      // Keep unit CI deterministic. Run this external integration probe only
+      // in a job that deliberately supplies network access and credentials.
+      return;
+    }
     const url = process.env.VITE_SUPABASE_URL;
     const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
     if (!url || !key) {
