@@ -5,7 +5,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const ENQUEUEABLE = [
   "crawl.site",
   "vitals.refresh",
-  "gsc_import",
   "ga4_import",
   "wp_sync",
   "wp_verify",

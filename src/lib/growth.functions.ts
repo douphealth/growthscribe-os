@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Json } from "@/integrations/supabase/types";
+import { computeWindow, enqueueGscPullJob } from "@/lib/gsc-import.server";
 
 const orgScoped = z.object({ organizationId: z.string().uuid() });
 
@@ -197,8 +198,16 @@ export const importGscData = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertMember(supabase, userId, data.organizationId);
-    const job = await enqueue(supabase, data.organizationId, userId, "gsc_import", {}, data.siteId);
-    return { jobId: job.id };
+    const window = computeWindow(7);
+    const job = await enqueueGscPullJob(supabase, {
+      organizationId: data.organizationId,
+      siteId: data.siteId,
+      createdBy: userId,
+      startDate: window.startDate,
+      endDate: window.endDate,
+      trigger: "manual",
+    });
+    return { jobId: job.jobId, created: job.created, window: job.window };
   });
 
 export const importGa4Data = createServerFn({ method: "POST" })

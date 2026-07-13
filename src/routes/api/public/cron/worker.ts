@@ -128,10 +128,7 @@ async function runTechnicalScanJob(
   return { scanned, findings: findings.length };
 }
 
-async function dispatch(
-  admin: Admin,
-  job: JobRow,
-) {
+async function dispatch(admin: Admin, job: JobRow) {
   switch (job.job_type) {
     case "technical.scan":
       return runTechnicalScanJob(admin, job);
@@ -146,7 +143,6 @@ async function dispatch(
       return runBriefGenerate(admin, job);
     case "ai_visibility":
       return runAiVisibility(admin, job);
-    case "gsc_import":
     case "gsc.pull":
       return runGscImport(admin, job);
     case "ga4_import":
@@ -198,49 +194,26 @@ export const Route = createFileRoute("/api/public/cron/worker")({
             locked_at: null,
             locked_by: null,
             last_error: "reaped: worker did not finish within 10 minutes",
-            finished_at: new Date().toISOString(),
+            started_at: null,
+            finished_at: null,
+            next_run_at: new Date().toISOString(),
           })
           .eq("status", "running")
           .lt("started_at", stuckCutoff);
 
-        const { data: candidates, error: cErr } = await admin
-          .from("background_jobs")
-          .select("id, job_type, organization_id, site_id, payload, created_by, retry_count, max_retries")
-          .eq("status", "queued")
-          .lte("next_run_at", new Date().toISOString())
-          .order("priority", { ascending: false })
-          .order("next_run_at", { ascending: true })
-          .limit(MAX_JOBS_PER_TICK);
+        const workerId = `worker-${crypto.randomUUID().slice(0, 8)}`;
+        const { data: candidates, error: cErr } = await admin.rpc("claim_jobs", {
+          p_worker_id: workerId,
+          p_limit: MAX_JOBS_PER_TICK,
+          p_max_running_per_org: MAX_RUNNING_PER_ORG,
+          p_max_running_gsc: 2,
+        });
         if (cErr) {
           return new Response(JSON.stringify({ error: cErr.message }), { status: 500 });
         }
 
         const results: Array<{ id: string; status: string; error?: string }> = [];
-        const workerId = `worker-${crypto.randomUUID().slice(0, 8)}`;
         for (const c of candidates ?? []) {
-          // Per-org concurrency cap.
-          const { count: runningForOrg } = await admin
-            .from("background_jobs")
-            .select("id", { count: "exact", head: true })
-            .eq("organization_id", c.organization_id)
-            .eq("status", "running");
-          if ((runningForOrg ?? 0) >= MAX_RUNNING_PER_ORG) continue;
-
-          // Atomic claim: only succeeds if still queued.
-          const { data: claimed, error: clErr } = await admin
-            .from("background_jobs")
-            .update({
-              status: "running",
-              started_at: new Date().toISOString(),
-              locked_at: new Date().toISOString(),
-              locked_by: workerId,
-            })
-            .eq("id", c.id)
-            .eq("status", "queued")
-            .select("id")
-            .maybeSingle();
-          if (clErr || !claimed) continue;
-
           await admin.from("job_logs").insert({
             job_id: c.id,
             organization_id: c.organization_id,

@@ -36,6 +36,7 @@ import {
   type FixPreview,
 } from "@/lib/technical.functions";
 import { enqueueJob } from "@/lib/jobs.functions";
+import { pullSearchConsole } from "@/lib/integrations.functions";
 import {
   discoverInternalLinks,
   scanImageAlts,
@@ -88,6 +89,7 @@ function TechnicalPage() {
   const bulkAlts = useServerFn(bulkApplyImageAlts);
   const applyLink = useServerFn(applyInternalLink);
   const enqueue = useServerFn(enqueueJob);
+  const pullGsc = useServerFn(pullSearchConsole);
 
   const [siteId, setSiteId] = useState<string>("");
   const [busy, setBusy] = useState(false);
@@ -390,8 +392,14 @@ function TechnicalPage() {
             variant="outline"
             onClick={async () => {
               if (!orgId || !siteId) return;
-              await enqueue({ data: { organizationId: orgId, siteId, jobType: "gsc_import", payload: { days: 7 }, priority: 5 } });
-              toast.success("Search Console pull queued");
+              const result = await pullGsc({
+                data: { organizationId: orgId, siteId, days: 7 },
+              });
+              toast.success(
+                result.created
+                  ? "Search Console pull queued"
+                  : "Search Console pull already queued",
+              );
             }}
             disabled={!siteId}
           >
