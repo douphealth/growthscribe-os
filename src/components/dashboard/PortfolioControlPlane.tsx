@@ -767,3 +767,4 @@ export function PortfolioControlPlane() {
     </>
   );
 }
+// Lovable contents reconciliation: Portfolio Control Plane runtime module.
