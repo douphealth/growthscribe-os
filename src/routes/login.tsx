@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth-context";
+import { signInWithGoogle } from "@/lib/oauth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,11 +39,12 @@ function LoginPage() {
   };
 
   const handleGoogle = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/dashboard`,
-    });
-    if (result.error) toast.error(result.error.message);
-    else if (!result.redirected) navigate({ to: "/dashboard" });
+    setBusy(true);
+    const { error } = await signInWithGoogle(window.location.origin);
+    if (error) {
+      setBusy(false);
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -59,7 +60,13 @@ function LoginPage() {
           <CardDescription>Sign in to your GrowthScribe OS workspace</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button variant="outline" className="w-full" onClick={handleGoogle} type="button">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogle}
+            type="button"
+            disabled={busy}
+          >
             <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
