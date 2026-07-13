@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { googleOAuthOptions, isLovableHostedOrigin, oauthRedirectUrl } from "@/lib/oauth";
+import {
+  googleOAuthOptions,
+  isGoogleSignInAvailable,
+  isLovableHostedOrigin,
+  oauthRedirectUrl,
+} from "@/lib/oauth";
 
 const source = (path: string) => readFileSync(new URL(`../../${path}`, import.meta.url), "utf8");
 
@@ -24,6 +29,13 @@ describe("external-host OAuth", () => {
   it("uses the Lovable broker only on Lovable-hosted origins", () => {
     expect(isLovableHostedOrigin("https://growthscribe-os.lovable.app")).toBe(true);
     expect(isLovableHostedOrigin("https://growthscribe-os.papalexios.workers.dev")).toBe(false);
+  });
+
+  it("blocks external Google redirects until the provider is explicitly enabled", () => {
+    const workerOrigin = "https://growthscribe-os.papalexios.workers.dev";
+    expect(isGoogleSignInAvailable(workerOrigin, false)).toBe(false);
+    expect(isGoogleSignInAvailable(workerOrigin, true)).toBe(true);
+    expect(isGoogleSignInAvailable("https://growthscribe-os.lovable.app", false)).toBe(true);
   });
 
   it("keeps hosting-specific OAuth details out of login and signup", () => {
