@@ -2,13 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const ENQUEUEABLE = [
-  "crawl.site",
-  "vitals.refresh",
-  "ga4_import",
-  "wp_sync",
-  "wp_verify",
-] as const;
+const ENQUEUEABLE = ["crawl.site", "vitals.refresh", "ga4_import", "wp_sync", "wp_verify"] as const;
 
 const input = z.object({
   organizationId: z.string().uuid(),

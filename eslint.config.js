@@ -1,5 +1,5 @@
 import js from "@eslint/js";
-import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
+import eslintConfigPrettier from "eslint-config-prettier";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
@@ -39,5 +39,8 @@ export default tseslint.config(
       ],
     },
   },
-  eslintPluginPrettier,
+  // Formatting is enforced separately for files changed by a pull request.
+  // Keeping it out of ESLint lets semantic linting cover the entire legacy
+  // codebase while formatting debt is paid down incrementally.
+  eslintConfigPrettier,
 );

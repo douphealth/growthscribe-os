@@ -307,10 +307,7 @@ export async function runWpSync(admin: Admin, job: JobRow) {
         } catch (be) {
           warnings.push(`score breakdowns: ${(be as Error).message}`);
         }
-        await admin
-          .from("background_jobs")
-          .update({ items_processed: synced })
-          .eq("id", job.id);
+        await admin.from("background_jobs").update({ items_processed: synced }).eq("id", job.id);
         if (capped) warnings.push(`Reached pagination cap for ${type}`);
       }
     } catch (e) {
@@ -350,10 +347,7 @@ type AuditResult = {
 export async function runContentAudit(admin: Admin, job: JobRow) {
   const payload = (job.payload ?? {}) as { auditId?: string; url?: string };
   if (!payload.auditId || !payload.url) throw new Error("content_audit requires auditId+url");
-  await admin
-    .from("content_audits")
-    .update({ status: "running" })
-    .eq("id", payload.auditId);
+  await admin.from("content_audits").update({ status: "running" }).eq("id", payload.auditId);
   try {
     const res = await fetch(payload.url, {
       headers: { "User-Agent": "GrowthScribeBot/1.0" },
@@ -388,7 +382,14 @@ export async function runContentAudit(admin: Admin, job: JobRow) {
             },
           },
         },
-        required: ["title", "quality_score", "eeat_score", "aeo_score", "ai_summary", "recommendations"],
+        required: [
+          "title",
+          "quality_score",
+          "eeat_score",
+          "aeo_score",
+          "ai_summary",
+          "recommendations",
+        ],
       },
     );
     await admin
@@ -455,7 +456,10 @@ export async function runBriefGenerate(admin: Admin, job: JobRow) {
     {
       type: "object",
       properties: {
-        search_intent: { type: "string", enum: ["informational", "commercial", "transactional", "navigational"] },
+        search_intent: {
+          type: "string",
+          enum: ["informational", "commercial", "transactional", "navigational"],
+        },
         word_count_target: { type: "integer", minimum: 300, maximum: 5000 },
         outline: {
           type: "array",
@@ -480,7 +484,14 @@ export async function runBriefGenerate(admin: Admin, job: JobRow) {
           },
         },
       },
-      required: ["search_intent", "word_count_target", "outline", "aeo_questions", "geo_signals", "internal_links"],
+      required: [
+        "search_intent",
+        "word_count_target",
+        "outline",
+        "aeo_questions",
+        "geo_signals",
+        "internal_links",
+      ],
     },
   );
 
@@ -611,7 +622,8 @@ type PsiResult = {
 };
 
 async function fetchPsi(url: string, strategy: "mobile" | "desktop"): Promise<PsiResult | null> {
-  const apiKey = process.env.GOOGLE_PAGESPEED_API_KEY ?? process.env.GOOGLE_SEARCH_CONSOLE_API_KEY ?? "";
+  const apiKey =
+    process.env.GOOGLE_PAGESPEED_API_KEY ?? process.env.GOOGLE_SEARCH_CONSOLE_API_KEY ?? "";
   const params = new URLSearchParams({ url, strategy, category: "performance" });
   if (apiKey) params.set("key", apiKey);
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params.toString()}`;
@@ -649,10 +661,7 @@ async function fetchPsi(url: string, strategy: "mobile" | "desktop"): Promise<Ps
 
 export async function runVitalsRefresh(admin: Admin, job: JobRow) {
   if (!job.site_id) throw new Error("vitals.refresh requires site_id");
-  const limit = Math.min(
-    25,
-    Math.max(1, Number((job.payload as { limit?: number })?.limit ?? 10)),
-  );
+  const limit = Math.min(25, Math.max(1, Number((job.payload as { limit?: number })?.limit ?? 10)));
   const { data: posts, error } = await admin
     .from("wordpress_posts")
     .select("id, url")
