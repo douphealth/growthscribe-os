@@ -216,8 +216,9 @@ export const importGa4Data = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertMember(supabase, userId, data.organizationId);
-    const job = await enqueue(supabase, data.organizationId, userId, "ga4_import", {}, data.siteId);
-    return { jobId: job.id };
+    throw new Error(
+      "GA4 metric ingestion is not enabled. Configure and verify Analytics Data API access before scheduling imports.",
+    );
   });
 
 export const runAiVisibilityTest = createServerFn({ method: "POST" })
@@ -234,16 +235,7 @@ export const runAiVisibilityTest = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertMember(supabase, userId, data.organizationId);
-    const job = await enqueue(
-      supabase,
-      data.organizationId,
-      userId,
-      "ai_visibility",
-      {
-        query: data.query,
-        engine: data.engine,
-      },
-      data.siteId,
+    throw new Error(
+      "Legacy live-engine visibility jobs are disabled because they used model proxies rather than verified engine observations. Use the clearly labeled AI Response Lab instead.",
     );
-    return { jobId: job.id };
   });
