@@ -12,8 +12,9 @@ without mass-publishing low-quality AI content.
 - AI-driven content audits, briefs, and recommendations
 - Topical maps, internal-link opportunities, and AEO/GEO scoring
 - WordPress sync and approval-based draft publishing
-- GSC and GA4 integrations (queued via background jobs)
-- AI visibility testing across Google AIO, Perplexity, ChatGPT and Claude
+- Verified GSC ingestion with freshness, failure, and portfolio data-trust evidence
+- GA4 property mapping (configuration only; Analytics Data API ingestion is not enabled yet)
+- Experimental AI response scenarios with disclosed model provenance (not live-engine visibility)
 - Audit logs and editorial task workflows
 
 ## Tech Stack
@@ -86,12 +87,26 @@ Key tables: `organizations`, `organization_members`, `sites`,
 - **Audit logs** capture sensitive actions and are readable only by org
   admins.
 
+## Capability contract
+
+| Capability            | Current evidence level                                                       |
+| --------------------- | ---------------------------------------------------------------------------- |
+| Google Search Console | Live connector, queued ingestion, imported metrics, freshness telemetry      |
+| WordPress             | Credential verification, content sync, approval-based draft workflows        |
+| GA4                   | Property mapping only; no imported metrics or Realtime/Data API proof        |
+| AI Response Lab       | Disclosed model simulations; not ChatGPT/Gemini/Perplexity live observations |
+| Portfolio dashboard   | Membership-scoped aggregation with deterministic data-trust gates            |
+
+The UI must not promote a provider from `configured` to `verified` without a
+successful probe or fresh imported evidence. No-op jobs must fail explicitly
+instead of reporting success.
+
 ## Roadmap
 
-- WordPress REST integration (live verification, post sync, draft push)
-- Google Search Console + GA4 OAuth and metric ingestion
-- AI audit engine wired to Lovable AI Gateway
-- AEO/GEO live testing against Perplexity and Google AIO
+- GA4 OAuth, Analytics Data API metric ingestion, and Realtime verification
+- Provider-specific WordPress and GA4 freshness telemetry in the portfolio RPC
+- Live-engine AEO/GEO observations through supported first-party APIs
+- Evidence-calibrated recommendation scoring and outcome measurement
 - Approval workflow UI with diff view and one-click publish
 - Stripe-based plans, seats and usage metering
 - Background-jobs worker (pg_cron + TanStack server routes)
@@ -103,5 +118,3 @@ Proprietary — © GrowthScribe. All rights reserved.
 ## Portfolio Control Plane
 
 Phase 3 is deployed from `main`: membership-scoped portfolio aggregation, canonical-domain reporting, operational health, and queued GSC management across all managed organizations.
-
-Lovable reconciliation checkpoint: all Phase 3 runtime and schema files are present on `main` through post-connection Contents API commits; checkpoint source `d0d22fd69a56757744fb9b7eb4838e45684066ed`.
