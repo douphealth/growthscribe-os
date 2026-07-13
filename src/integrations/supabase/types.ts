@@ -2074,6 +2074,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_jobs: {
+        Args: {
+          p_limit?: number
+          p_max_running_gsc?: number
+          p_max_running_per_org?: number
+          p_worker_id: string
+        }
+        Returns: Database["public"]["Tables"]["background_jobs"]["Row"][]
+      }
       can_create_initial_org_membership: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean

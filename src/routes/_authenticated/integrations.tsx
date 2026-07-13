@@ -223,16 +223,17 @@ function IntegrationsPage() {
   const handlePullGsc = async (sId: string) => {
     if (!orgId) return;
     setGscPullBusyId(sId);
-    const t = toast.loading("Pulling last 28 days from Search Console…");
+    const t = toast.loading("Queueing Search Console sync…");
     try {
       const res = await pullGsc({ data: { organizationId: orgId, siteId: sId, days: 28 } });
       toast.success(
-        `Synced ${res.rows.toLocaleString()} rows · ${res.totals.clicks.toLocaleString()} clicks`,
-        { id: t },
+        res.created ? "Search Console sync queued" : "Search Console sync already queued",
+        {
+          id: t,
+          description: `Job ${res.jobId.slice(0, 8)} · ${res.window.startDate} → ${res.window.endDate}`,
+        },
       );
-      qc.invalidateQueries({ queryKey: ["sites", orgId] });
-      qc.invalidateQueries({ queryKey: ["dashboard-stats", orgId] });
-      qc.invalidateQueries({ queryKey: ["activities", orgId] });
+      qc.invalidateQueries({ queryKey: ["gsc-sync-jobs", orgId] });
     } catch (err) {
       toast.error((err as Error).message, { id: t });
     } finally {
@@ -502,7 +503,7 @@ function IntegrationsPage() {
                           gscPullBusyId === gscSiteId ? "animate-pulse" : ""
                         }`}
                       />
-                      {gscPullBusyId === gscSiteId ? "Pulling…" : "Pull last 28 days"}
+                      {gscPullBusyId === gscSiteId ? "Queueing…" : "Pull last 28 days"}
                     </Button>
                   )}
                 </div>

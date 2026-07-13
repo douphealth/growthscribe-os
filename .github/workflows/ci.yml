@@ -39,5 +39,21 @@ jobs:
         if: ${{ env.VITE_SUPABASE_PROJECT_ID != '' && env.SUPABASE_ACCESS_TOKEN != '' }}
         run: bun run db:types:check
 
+      # The repository predates the current Prettier baseline. Enforce formatting
+      # on every file a PR changes without allowing legacy formatting debt to hide
+      # semantic ESLint failures elsewhere in the codebase.
+      - name: Check formatting of changed files
+        if: ${{ github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          mapfile -t changed_files < <(
+            git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" \
+              | grep -E '\.(js|jsx|ts|tsx|json|css|md|yml|yaml)$' || true
+          )
+          if (( ${#changed_files[@]} > 0 )); then
+            bunx prettier --check "${changed_files[@]}"
+          fi
+
       - name: Run CI (typecheck, lint, test, build)
         run: bun run ci

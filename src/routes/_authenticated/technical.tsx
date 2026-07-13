@@ -25,7 +25,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Gauge, Wand2, ShieldCheck, CheckCircle2, Link2, Image as ImageIcon, Globe, Search, Zap } from "lucide-react";
+import {
+  Gauge,
+  Wand2,
+  ShieldCheck,
+  CheckCircle2,
+  Link2,
+  Image as ImageIcon,
+  Globe,
+  Search,
+  Zap,
+} from "lucide-react";
 import { ActiveJobsBanner } from "@/components/jobs/ActiveJobsBanner";
 import {
   runTechnicalScan,
@@ -36,6 +46,7 @@ import {
   type FixPreview,
 } from "@/lib/technical.functions";
 import { enqueueJob } from "@/lib/jobs.functions";
+import { pullSearchConsole } from "@/lib/integrations.functions";
 import {
   discoverInternalLinks,
   scanImageAlts,
@@ -88,6 +99,7 @@ function TechnicalPage() {
   const bulkAlts = useServerFn(bulkApplyImageAlts);
   const applyLink = useServerFn(applyInternalLink);
   const enqueue = useServerFn(enqueueJob);
+  const pullGsc = useServerFn(pullSearchConsole);
 
   const [siteId, setSiteId] = useState<string>("");
   const [busy, setBusy] = useState(false);
@@ -367,7 +379,15 @@ function TechnicalPage() {
             variant="outline"
             onClick={async () => {
               if (!orgId || !siteId) return;
-              await enqueue({ data: { organizationId: orgId, siteId, jobType: "crawl.site", payload: { limit: 100 }, priority: 5 } });
+              await enqueue({
+                data: {
+                  organizationId: orgId,
+                  siteId,
+                  jobType: "crawl.site",
+                  payload: { limit: 100 },
+                  priority: 5,
+                },
+              });
               toast.success("Site crawl queued — results will appear shortly");
               qc.invalidateQueries({ queryKey: ["technical-recs"] });
             }}
@@ -379,7 +399,15 @@ function TechnicalPage() {
             variant="outline"
             onClick={async () => {
               if (!orgId || !siteId) return;
-              await enqueue({ data: { organizationId: orgId, siteId, jobType: "vitals.refresh", payload: { limit: 10 }, priority: 5 } });
+              await enqueue({
+                data: {
+                  organizationId: orgId,
+                  siteId,
+                  jobType: "vitals.refresh",
+                  payload: { limit: 10 },
+                  priority: 5,
+                },
+              });
               toast.success("Core Web Vitals refresh queued");
             }}
             disabled={!siteId}
@@ -390,8 +418,14 @@ function TechnicalPage() {
             variant="outline"
             onClick={async () => {
               if (!orgId || !siteId) return;
-              await enqueue({ data: { organizationId: orgId, siteId, jobType: "gsc_import", payload: { days: 7 }, priority: 5 } });
-              toast.success("Search Console pull queued");
+              const result = await pullGsc({
+                data: { organizationId: orgId, siteId, days: 7 },
+              });
+              toast.success(
+                result.created
+                  ? "Search Console pull queued"
+                  : "Search Console pull already queued",
+              );
             }}
             disabled={!siteId}
           >
