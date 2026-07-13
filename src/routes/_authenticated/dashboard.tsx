@@ -5,3 +5,4 @@ import { PortfolioControlPlane } from "@/components/dashboard/PortfolioControlPl
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: PortfolioControlPlane,
 });
+// Lovable contents reconciliation: dashboard route activation.
