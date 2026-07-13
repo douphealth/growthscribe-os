@@ -99,3 +99,7 @@ Key tables: `organizations`, `organization_members`, `sites`,
 ## License
 
 Proprietary — © GrowthScribe. All rights reserved.
+
+## Portfolio Control Plane
+
+Phase 3 is deployed from `main`: membership-scoped portfolio aggregation, canonical-domain reporting, operational health, and queued GSC management across all managed organizations.
