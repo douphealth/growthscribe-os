@@ -17,16 +17,15 @@ async function assertMember(supabase: SB, userId: string, organizationId: string
   if (!data) throw new Error("Not a member of this organization");
 }
 
-const ENGINES = ["gpt", "gemini", "perplexity"] as const;
+const ENGINES = ["gpt", "gemini"] as const;
 type Engine = (typeof ENGINES)[number];
 
 const ENGINE_MODELS: Record<Engine, string> = {
   gpt: "openai/gpt-5-mini",
   gemini: "google/gemini-2.5-flash",
-  perplexity: "google/gemini-2.5-pro", // proxy via gateway
 };
 
-const SYS_PROMPT = `You are simulating a search-style answer engine. Given a user query, respond with the answer you would naturally produce, including any sources or citations you would normally surface (URLs, brand names). Do NOT add disclaimers about being an AI or about real-time access. Always include a "Sources:" line at the end listing 3-7 distinct domains in plain text (one per line, format: domain - short reason). If you genuinely have no candidates, return "Sources: none".`;
+const SYS_PROMPT = `This is a model-response scenario test, not a live search-engine measurement. Answer the user query naturally. Mention sources only when you have a grounded reason to do so; never fabricate a URL, citation, ranking, or real-time observation. End with a "Sources:" line containing only domains actually referenced in the answer, or "Sources: none".`;
 
 async function callGateway(model: string, query: string): Promise<string> {
   const apiKey = process.env.LOVABLE_API_KEY;
@@ -139,7 +138,11 @@ export const runAiVisibilityTests = createServerFn({ method: "POST" })
             appears,
             rank,
             citation_url: citation,
-            raw_response: { content } as Json,
+            raw_response: {
+              method: "model_response_simulation",
+              model: ENGINE_MODELS[engine],
+              content,
+            } as Json,
           });
         } catch (err) {
           rows.push({
@@ -163,6 +166,7 @@ export const runAiVisibilityTests = createServerFn({ method: "POST" })
     const hits = rows.filter((r) => r.appears).length;
     return {
       ok: true,
+      method: "model_response_simulation" as const,
       total,
       hits,
       coverage: total ? hits / total : 0,
