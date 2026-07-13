@@ -176,7 +176,11 @@ export const saveGa4Property = createServerFn({ method: "POST" })
       provider: "ga4",
       status: "connected",
       created_by: userId,
-      config: { property_id: data.propertyId } as Json,
+      config: {
+        property_id: data.propertyId,
+        verification_state: "configured",
+        ingestion_enabled: false,
+      } as Json,
     });
     if (error) throw error;
     await supabase
@@ -187,10 +191,10 @@ export const saveGa4Property = createServerFn({ method: "POST" })
     await supabase.from("activities").insert({
       organization_id: data.organizationId,
       owner_id: userId,
-      type: "integration.ga4.connected",
-      title: "GA4 linked",
+      type: "integration.ga4.configured",
+      title: "GA4 property configured",
       description: data.propertyId,
       link: "/integrations",
     });
-    return { ok: true };
+    return { ok: true, verificationState: "configured" as const, ingestionEnabled: false };
   });
