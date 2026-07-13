@@ -1472,6 +1472,10 @@ export type Database = {
         }
         Returns: Database["public"]["Tables"]["background_jobs"]["Row"][]
       }
+      get_portfolio_control_plane: {
+        Args: { p_window_days?: number }
+        Returns: Json
+      }
       can_create_initial_org_membership: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean

@@ -61,7 +61,7 @@ const sections: Array<{
     label: "Overview",
     icon: LayoutDashboard,
     items: [
-      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Portfolio Control Plane", url: "/dashboard", icon: LayoutDashboard },
       { title: "Sites", url: "/sites", icon: Globe },
     ],
   },
@@ -153,12 +153,14 @@ export function AppSidebar() {
           const visibleItems = section.items.filter((i) => !i.adminOnly || isAdmin);
           if (visibleItems.length === 0) return null;
           const sectionActive = visibleItems.some(
-            (i) =>
-              location.pathname === i.url ||
-              location.pathname.startsWith(i.url + "/"),
+            (i) => location.pathname === i.url || location.pathname.startsWith(i.url + "/"),
           );
           return (
-            <Collapsible key={section.label} defaultOpen={sectionActive} className="group/collapsible">
+            <Collapsible
+              key={section.label}
+              defaultOpen={sectionActive}
+              className="group/collapsible"
+            >
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
                   <SidebarGroupLabel className="flex w-full cursor-pointer items-center gap-2 hover:text-foreground">
