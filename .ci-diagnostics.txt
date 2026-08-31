@@ -1,0 +1,296 @@
+===== typecheck =====
+$ tsc --noEmit
+EXIT=0
+===== lint =====
+$ eslint .
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/components/ui/badge.tsx
+  32:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/components/ui/button.tsx
+  49:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/components/ui/form.tsx
+  163:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/components/ui/navigation-menu.tsx
+  111:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/components/ui/sidebar.tsx
+  743:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/components/ui/toggle.tsx
+  42:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/lib/auth-context.tsx
+  91:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/lib/org-context.tsx
+   57:9   warning  The 'organizations' logical expression could make the dependencies of useEffect Hook (at line 66) change on every render. To fix this, wrap the initialization of 'organizations' in its own useMemo() Hook  react-hooks/exhaustive-deps
+   57:9   warning  The 'organizations' logical expression could make the dependencies of useMemo Hook (at line 91) change on every render. To fix this, wrap the initialization of 'organizations' in its own useMemo() Hook    react-hooks/exhaustive-deps
+   97:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                               react-refresh/only-export-components
+  103:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                               react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/lib/seo-automation.functions.ts
+  7:27  warning  'fetchWpPost' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/routes/_authenticated/recommendations.tsx
+  106:9  warning  The 'recs' logical expression could make the dependencies of useMemo Hook (at line 112) change on every render. To fix this, wrap the initialization of 'recs' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  106:9  warning  The 'recs' logical expression could make the dependencies of useMemo Hook (at line 123) change on every render. To fix this, wrap the initialization of 'recs' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/routes/_authenticated/sites.tsx
+  28:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/runner/work/growthscribe-os/growthscribe-os/src/routes/api/public/cron/scan.ts
+  29:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 16 problems (1 error, 15 warnings)
+
+error: script "lint" exited with code 1
+EXIT=1
+===== test =====
+$ vitest run
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.6 [39m[90m/home/runner/work/growthscribe-os/growthscribe-os[39m
+
+ [32m✓[39m src/__tests__/wordpress-posts-schema.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/portfolio-reliability.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/gsc-import.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/__tests__/portfolio-control-plane.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [31m❯[39m src/__tests__/autonomous-growth.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 21[2mms[22m[39m
+     [32m✓[39m prioritizes pages with demand and striking-distance rankings[32m 3[2mms[22m[39m
+     [32m✓[39m rejects large content loss and fabricated first-person testing claims[32m 7[2mms[22m[39m
+[31m     [31m×[31m rejects newly introduced percentage claims[39m[32m 10[2mms[22m[39m
+ [32m✓[39m src/__tests__/oauth.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/product-truth-contract.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/smoke.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/__tests__/autonomous-growth.test.ts[2m > [22mHermes autonomous growth[2m > [22mrejects newly introduced percentage claims
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m src/__tests__/autonomous-growth.test.ts:[2m69:23[22m[39m
+    [90m 67|[39m       minimumQualityScore[33m:[39m [34m0[39m[33m,[39m
+    [90m 68|[39m     })[33m;[39m
+    [90m 69|[39m     [34mexpect[39m(result[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   |[39m                       [31m^[39m
+    [90m 70|[39m     [34mexpect[39m(result[33m.[39mreasons)[33m.[39m[34mtoContain[39m([32m"new percentage claim detected"[39m)[33m;[39m
+    [90m 71|[39m   })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m29 passed[39m[22m[90m (30)[39m
+[2m   Start at [22m 11:49:47
+[2m   Duration [22m 573ms[2m (transform 377ms, setup 0ms, import 505ms, tests 53ms, environment 1ms)[22m
+
+
+::error file=/home/runner/work/growthscribe-os/growthscribe-os/src/__tests__/autonomous-growth.test.ts,title=src/__tests__/autonomous-growth.test.ts > Hermes autonomous growth > rejects newly introduced percentage claims,line=69,column=23::AssertionError: expected true to be false // Object.is equality%0A%0A- Expected%0A+ Received%0A%0A- false%0A+ true%0A%0A ❯ src/__tests__/autonomous-growth.test.ts:69:23%0A%0A
+error: script "test" exited with code 1
+EXIT=1
+===== build =====
+$ vite build
+[36mvite v7.3.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 3167 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/client/[22m[32m.assetsignore                              [39m[1m[2m  0.02 kB[22m[1m[22m
+[2mdist/client/[22m[2massets/[22m[35mstyles-D-Q9Gm7Z.css                 [39m[1m[2m 99.73 kB[22m[1m[22m[2m │ gzip:  16.22 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mcheck-C6EhW-lY.js                   [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mloader-circle-CYmfV8x1.js           [39m[1m[2m  0.14 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mplus-BoFwVIyP.js                    [39m[1m[2m  0.15 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mx-DkBT4sZn.js                       [39m[1m[2m  0.15 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2mdist/client/[22m[2massets/[22m[36marrow-right-CeoPqFCz.js             [39m[1m[2m  0.17 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtrending-up-BJUyXJ1H.js             [39m[1m[2m  0.17 kB[22m[1m[22m[2m │ gzip:   0.17 kB[22m
+[2mdist/client/[22m[2massets/[22m[36msearch--LXIljYw.js                  [39m[1m[2m  0.18 kB[22m[1m[22m[2m │ gzip:   0.17 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mskeleton-DKGwVBGO.js                [39m[1m[2m  0.18 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mcircle-check-DnT12YWC.js            [39m[1m[2m  0.18 kB[22m[1m[22m[2m │ gzip:   0.17 kB[22m
+[2mdist/client/[22m[2massets/[22m[36maudit.functions--tfrMSIR.js         [39m[1m[2m  0.23 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mdownload-CKbXzVEr.js                [39m[1m[2m  0.23 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mactivity-ux44xOas.js                [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mbrief.functions-CImlmN6-.js         [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mglobe-CMMO6Sp1.js                   [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtrending-down-CtFB3UO0.js           [39m[1m[2m  0.25 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mchart-column-BLoKgXl5.js            [39m[1m[2m  0.25 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mexternal-link-DfapEPg-.js           [39m[1m[2m  0.25 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mplug-DHg_nS4N.js                    [39m[1m[2m  0.29 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mlist-todo-CPHjmpAU.js               [39m[1m[2m  0.30 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mshield-check-CvnuROd2.js            [39m[1m[2m  0.32 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mbot-2v_6r2p8.js                     [39m[1m[2m  0.32 kB[22m[1m[22m[2m │ gzip:   0.23 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mfile-search-lBtzYc62.js             [39m[1m[2m  0.37 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mnetwork-BSh1MsbV.js                 [39m[1m[2m  0.38 kB[22m[1m[22m[2m │ gzip:   0.24 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mfile-text-CBAG__7i.js               [39m[1m[2m  0.38 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtextarea-DWT--L0X.js                [39m[1m[2m  0.46 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[2mdist/client/[22m[2massets/[22m[36msparkles-q5tBW8zF.js                [39m[1m[2m  0.50 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+[2mdist/client/[22m[2massets/[22m[36maudit-logs-C36cq3Pw.js              [39m[1m[2m  0.53 kB[22m[1m[22m[2m │ gzip:   0.37 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtasks-CYHctW5l.js                   [39m[1m[2m  0.55 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/client/[22m[2massets/[22m[36minput-BjeMIYmi.js                   [39m[1m[2m  0.56 kB[22m[1m[22m[2m │ gzip:   0.35 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mintegrations.functions-CVcC8RXX.js  [39m[1m[2m  0.60 kB[22m[1m[22m[2m │ gzip:   0.36 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mwand-sparkles-2VUALnIo.js           [39m[1m[2m  0.71 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mbadge-ByHdOWE-.js                   [39m[1m[2m  0.72 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mlabel-Cqy3zqib.js                   [39m[1m[2m  0.88 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mcard-9QeFgZlt.js                    [39m[1m[2m  0.99 kB[22m[1m[22m[2m │ gzip:   0.36 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mwordpress.functions-BKiQbUpF.js     [39m[1m[2m  1.07 kB[22m[1m[22m[2m │ gzip:   0.51 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mPageHeader-a3KR_G6b.js              [39m[1m[2m  1.34 kB[22m[1m[22m[2m │ gzip:   0.58 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtable-BHp33Qq9.js                   [39m[1m[2m  1.56 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+[2mdist/client/[22m[2massets/[22m[36monboarding-BfpEcT-i.js              [39m[1m[2m  1.92 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mdialog-9LMlvArj.js                  [39m[1m[2m  2.04 kB[22m[1m[22m[2m │ gzip:   0.82 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-Bv3qlcrl.js                   [39m[1m[2m  2.06 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+[2mdist/client/[22m[2massets/[22m[36msheet-CdbGJJFj.js                   [39m[1m[2m  2.48 kB[22m[1m[22m[2m │ gzip:   1.02 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-hZyHpdRP.js                   [39m[1m[2m  2.66 kB[22m[1m[22m[2m │ gzip:   1.20 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtabs-Bhf1TuP7.js                    [39m[1m[2m  3.36 kB[22m[1m[22m[2m │ gzip:   1.40 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mlogin-C3nA2DVi.js                   [39m[1m[2m  3.51 kB[22m[1m[22m[2m │ gzip:   1.58 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-BwwtTmoE.js                   [39m[1m[2m  3.52 kB[22m[1m[22m[2m │ gzip:   1.59 kB[22m
+[2mdist/client/[22m[2massets/[22m[36msettings-0A4t4QnJ.js                [39m[1m[2m  3.76 kB[22m[1m[22m[2m │ gzip:   1.74 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mcheckbox-ljtEMQVZ.js                [39m[1m[2m  3.97 kB[22m[1m[22m[2m │ gzip:   1.73 kB[22m
+[2mdist/client/[22m[2massets/[22m[36msignup-Ccge4O6z.js                  [39m[1m[2m  3.98 kB[22m[1m[22m[2m │ gzip:   1.74 kB[22m
+[2mdist/client/[22m[2massets/[22m[36moauth-qSZ05leB.js                   [39m[1m[2m  4.11 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-CMEHbwte.js                   [39m[1m[2m  4.52 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mauth-middleware-BdoVzCnT.js         [39m[1m[2m  4.58 kB[22m[1m[22m[2m │ gzip:   1.96 kB[22m
+[2mdist/client/[22m[2massets/[22m[36msites-CLVtZ3Nw.js                   [39m[1m[2m  4.59 kB[22m[1m[22m[2m │ gzip:   1.90 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mapprovals-DsRBO_rg.js               [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   2.12 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mbriefs-PJMWcrws.js                  [39m[1m[2m  5.31 kB[22m[1m[22m[2m │ gzip:   2.15 kB[22m
+[2mdist/client/[22m[2massets/[22m[36maudits-CIdnYq5Z.js                  [39m[1m[2m  5.38 kB[22m[1m[22m[2m │ gzip:   2.24 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mai-visibility-0d4hwxCN.js           [39m[1m[2m  5.52 kB[22m[1m[22m[2m │ gzip:   2.54 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtopical-maps-vKDBEy03.js            [39m[1m[2m  6.25 kB[22m[1m[22m[2m │ gzip:   2.55 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-Czvnt1wP.js                   [39m[1m[2m  6.54 kB[22m[1m[22m[2m │ gzip:   2.49 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-C_qm570h.js                   [39m[1m[2m  9.57 kB[22m[1m[22m[2m │ gzip:   2.79 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mintegrations-0xPQpL79.js            [39m[1m[2m 11.38 kB[22m[1m[22m[2m │ gzip:   3.74 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mrecommendations-DBlrCFX9.js         [39m[1m[2m 13.23 kB[22m[1m[22m[2m │ gzip:   4.76 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mcontent-inventory-DprgOXj6.js       [39m[1m[2m 13.53 kB[22m[1m[22m[2m │ gzip:   4.59 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mplaybooks-B2F5LVhg.js               [39m[1m[2m 14.43 kB[22m[1m[22m[2m │ gzip:   5.24 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mtechnical-Bk_yKxmm.js               [39m[1m[2m 17.30 kB[22m[1m[22m[2m │ gzip:   6.01 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-CL3tS6of.js                   [39m[1m[2m 19.68 kB[22m[1m[22m[2m │ gzip:   7.13 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mdropdown-menu-Co-vS9eD.js           [39m[1m[2m 22.42 kB[22m[1m[22m[2m │ gzip:   6.73 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mselect-C0Dff00F.js                  [39m[1m[2m 22.55 kB[22m[1m[22m[2m │ gzip:   7.88 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-B8BVhNem.js                   [39m[1m[2m 27.75 kB[22m[1m[22m[2m │ gzip:  10.73 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mroute-CsgJMeyv.js                   [39m[1m[2m 37.62 kB[22m[1m[22m[2m │ gzip:  11.76 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mdashboard-DYzUAIev.js               [39m[1m[2m444.75 kB[22m[1m[22m[2m │ gzip: 124.42 kB[22m
+[2mdist/client/[22m[2massets/[22m[36mindex-CbwvbyHZ.js                   [39m[1m[33m700.47 kB[39m[22m[2m │ gzip: 204.77 kB[22m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 7.36s[39m
+[36mvite v7.3.2 [32mbuilding ssr environment for production...[36m[39m
+transforming...
+[32m✓[39m 3242 modules transformed.
+rendering chunks...
+[2mdist/server/[22m[32mwrangler.json                                          [39m[1m[2m  1.29 kB[22m[1m[22m
+[2mdist/server/[22m[32m.vite/manifest.json                                    [39m[1m[2m 44.20 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[35mstyles-D-Q9Gm7Z.css                             [39m[1m[2m 99.73 kB[22m[1m[22m
+[2mdist/server/[22m[36mindex.js                                               [39m[1m[2m  0.10 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36m__23tanstack-start-plugin-adapters-Cwee5PKy.js  [39m[1m[2m  0.14 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcheck-DBcfZcK-.js                               [39m[1m[2m  0.21 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mx-DvGMIYsa.js                                   [39m[1m[2m  0.24 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mloader-circle-BSQSBJK8.js                       [39m[1m[2m  0.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplus-BeUu0SAZ.js                                [39m[1m[2m  0.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36marrow-right-B5ZoJs6H.js                         [39m[1m[2m  0.28 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msearch-CcSCpPXZ.js                              [39m[1m[2m  0.28 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtrending-up-IzJGsiMP.js                         [39m[1m[2m  0.29 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcircle-check-Bi5NLTdQ.js                        [39m[1m[2m  0.30 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcreateServerRpc-b_D1DacG.js                     [39m[1m[2m  0.31 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mskeleton-DK2styN7.js                            [39m[1m[2m  0.32 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mdownload-Cg6f7gTa.js                            [39m[1m[2m  0.35 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mglobe-DG6m7JC2.js                               [39m[1m[2m  0.36 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mactivity-BIxMcoIq.js                            [39m[1m[2m  0.36 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mexternal-link-DtThozPb.js                       [39m[1m[2m  0.38 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mchart-column-B2wSolGt.js                        [39m[1m[2m  0.38 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplug-Bc3spEtq.js                                [39m[1m[2m  0.42 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtrending-down-SBKK08dx.js                       [39m[1m[2m  0.43 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mlist-todo-BAn2hnGK.js                           [39m[1m[2m  0.44 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mshield-check-B--xAc5q.js                        [39m[1m[2m  0.46 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbot-BVa69iU4.js                                 [39m[1m[2m  0.47 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mfile-search-vHnd_OIa.js                         [39m[1m[2m  0.54 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mnetwork-Cp7uZyxb.js                             [39m[1m[2m  0.54 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mfile-text-C7M4LK1U.js                           [39m[1m[2m  0.55 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36museServerFn-BZpogY75.js                         [39m[1m[2m  0.59 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudit.functions-CzDGfeOe.js                     [39m[1m[2m  0.63 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msparkles-BlRlmZlY.js                            [39m[1m[2m  0.65 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbrief.functions-CU8tlb2P.js                     [39m[1m[2m  0.70 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtextarea-DFoZHTym.js                            [39m[1m[2m  0.73 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36minput-Bf0X3ezJ.js                               [39m[1m[2m  0.83 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mclient-o1fH1KBy.js                              [39m[1m[2m  0.84 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbadge-DBLlI4oG.js                               [39m[1m[2m  0.99 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mwand-sparkles-CdaCUCYb.js                       [39m[1m[2m  1.00 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudit-logs-B4VKEQPV.js                          [39m[1m[2m  1.20 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtasks-ClUaVkHi.js                               [39m[1m[2m  1.22 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mai-gateway-DTBN9XOq.js                          [39m[1m[2m  1.40 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mjobs.functions-rQHY3SYJ.js                      [39m[1m[2m  1.77 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcard-BmrnUAGx.js                                [39m[1m[2m  1.78 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mintegrations.functions-W0N1zDtO.js              [39m[1m[2m  1.78 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mlabel-D96esGGe.js                               [39m[1m[2m  1.79 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mstart-DqUcnEAt.js                               [39m[1m[2m  1.82 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mPageHeader-CwTccb4x.js                          [39m[1m[2m  2.03 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36musage.functions-8eGXOpt8.js                     [39m[1m[2m  2.52 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtable-mNKzt09M.js                               [39m[1m[2m  2.65 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mscore-inventory.functions-Bk2IYNOW.js           [39m[1m[2m  2.85 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mwordpress.server-C9_WSos2.js                    [39m[1m[2m  3.02 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mwordpress.functions-CuaRTnHf.js                 [39m[1m[2m  3.15 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mdialog-DZdGaCVD.js                              [39m[1m[2m  3.41 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msheet-Dl5ouuUh.js                               [39m[1m[2m  3.86 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36monboarding-CNR2YFMx.js                          [39m[1m[2m  4.01 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplaybook-presets-D9O9tFn0.js                    [39m[1m[2m  4.46 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbrief.functions-7mNRHQmo.js                     [39m[1m[2m  4.57 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudit.functions-DmNyw16w.js                     [39m[1m[2m  4.81 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-wBf3UJQu.js                               [39m[1m[2m  4.83 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtopical.functions-CXOJylDS.js                   [39m[1m[2m  5.18 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mportfolio.functions-gLXNS4wh.js                 [39m[1m[2m  5.85 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcompetitor.functions-CFpPx7Tq.js                [39m[1m[2m  6.09 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mlogin-D7GhHc2c.js                               [39m[1m[2m  6.43 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-DvxC5Iih.js                               [39m[1m[2m  6.97 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msignup-CbIqjQN9.js                              [39m[1m[2m  7.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msettings-FCyAopT4.js                            [39m[1m[2m  7.48 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mapprovals.functions-hZcZN53T.js                 [39m[1m[2m  7.63 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtabs--RBBpCzK.js                                [39m[1m[2m  7.76 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mintegrations.functions-BdC0ioiS.js              [39m[1m[2m  7.90 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36moauth-CDIaJpel.js                               [39m[1m[2m  8.26 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mgsc-import.server-BXeBwJ7l.js                   [39m[1m[2m  8.35 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msites-Ba5MjDDu.js                               [39m[1m[2m  8.79 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-5vUcOouT.js                               [39m[1m[2m  9.18 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcheckbox-BVdMnO9R.js                            [39m[1m[2m  9.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mai-visibility.functions-dJsUwHO8.js             [39m[1m[2m  9.82 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mapprovals-CCVG0x7P.js                           [39m[1m[2m  9.85 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36m_tanstack-start-manifest_v-Ct1ShtQg.js          [39m[1m[2m 10.30 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudits-V_M_Ur6D.js                              [39m[1m[2m 10.47 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbriefs-B0i7OfN9.js                              [39m[1m[2m 10.53 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mai-visibility-BO1F_PPo.js                       [39m[1m[2m 11.09 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-D5IRjJ8x.js                               [39m[1m[2m 11.15 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcontent-scoring-CPFuKDQY.js                     [39m[1m[2m 12.24 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplaybooks.functions-Chi44Z9d.js                 [39m[1m[2m 12.31 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtopical-maps-QjZkXoCZ.js                        [39m[1m[2m 12.90 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mseo-automation.functions-DmFmqgPW.js            [39m[1m[2m 14.55 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-BWELqwbp.js                               [39m[1m[2m 14.68 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-BNX_RXZB.js                               [39m[1m[2m 16.53 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mrecommendations.functions-D8YlbOfV.js           [39m[1m[2m 17.22 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mworker-entry-DcCCU3Hd.js                        [39m[1m[2m 21.67 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mintegrations-D11WC5yZ.js                        [39m[1m[2m 22.69 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplaybooks-DiJnCXjr.js                           [39m[1m[2m 24.22 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mrecommendations-C9Z6dqa5.js                     [39m[1m[2m 26.33 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcontent-inventory-DjFrQAFE.js                   [39m[1m[2m 28.09 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mwordpress.functions-CCuTRLB2.js                 [39m[1m[2m 30.57 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtechnical.functions-CgsLi2a7.js                 [39m[1m[2m 30.87 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtechnical-BpkOFqzx.js                           [39m[1m[2m 32.02 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-CAY6c2HC.js                               [39m[1m[2m 45.19 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mdropdown-menu-Xhm9zUQT.js                       [39m[1m[2m 54.30 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mselect-CcMoQIGf.js                              [39m[1m[2m 58.48 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-D4oOeyKr.js                               [39m[1m[2m 74.64 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mroute-BwNfRldD.js                               [39m[1m[2m 76.55 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mauth-middleware-CvXFJ_PO.js                     [39m[1m[2m110.20 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-BPwkYRsM.js                               [39m[1m[2m344.37 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mrouter-Bl5xF1hn.js                              [39m[1m[2m447.99 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-DPDW9gTy.js                               [39m[1m[33m707.33 kB[39m[22m
+[2mdist/server/[22m[2massets/[22m[36mserver-CX4bxhET.js                              [39m[1m[33m737.86 kB[39m[22m
+[2mdist/server/[22m[2massets/[22m[36mdashboard-Dg6egtLX.js                           [39m[1m[33m949.71 kB[39m[22m
+[32m✓ built in 7.68s[39m
+EXIT=0
