@@ -41,29 +41,25 @@ $ eslint .
 /home/runner/work/growthscribe-os/growthscribe-os/src/routes/_authenticated/sites.tsx
   28:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
 
-/home/runner/work/growthscribe-os/growthscribe-os/src/routes/api/public/cron/scan.ts
-  29:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+✖ 15 problems (0 errors, 15 warnings)
 
-✖ 16 problems (1 error, 15 warnings)
-
-error: script "lint" exited with code 1
-EXIT=1
+EXIT=0
 ===== test =====
 $ vitest run
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.6 [39m[90m/home/runner/work/growthscribe-os/growthscribe-os[39m
 
- [32m✓[39m src/__tests__/wordpress-posts-schema.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32m✓[39m src/__tests__/portfolio-reliability.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
- [32m✓[39m src/__tests__/gsc-import.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 8[2mms[22m[39m
- [32m✓[39m src/__tests__/portfolio-control-plane.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [31m❯[39m src/__tests__/autonomous-growth.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 21[2mms[22m[39m
-     [32m✓[39m prioritizes pages with demand and striking-distance rankings[32m 3[2mms[22m[39m
-     [32m✓[39m rejects large content loss and fabricated first-person testing claims[32m 7[2mms[22m[39m
-[31m     [31m×[31m rejects newly introduced percentage claims[39m[32m 10[2mms[22m[39m
- [32m✓[39m src/__tests__/oauth.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
- [32m✓[39m src/__tests__/product-truth-contract.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
- [32m✓[39m src/__tests__/smoke.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/wordpress-posts-schema.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/gsc-import.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/__tests__/portfolio-reliability.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/__tests__/portfolio-control-plane.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [31m❯[39m src/__tests__/autonomous-growth.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 37[2mms[22m[39m
+     [32m✓[39m prioritizes pages with demand and striking-distance rankings[32m 2[2mms[22m[39m
+     [32m✓[39m rejects large content loss and fabricated first-person testing claims[32m 14[2mms[22m[39m
+[31m     [31m×[31m rejects newly introduced percentage claims[39m[32m 16[2mms[22m[39m
+ [32m✓[39m src/__tests__/oauth.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/__tests__/product-truth-contract.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/smoke.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
 
 [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
 
@@ -89,8 +85,8 @@ $ vitest run
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
 [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m29 passed[39m[22m[90m (30)[39m
-[2m   Start at [22m 11:49:47
-[2m   Duration [22m 573ms[2m (transform 377ms, setup 0ms, import 505ms, tests 53ms, environment 1ms)[22m
+[2m   Start at [22m 11:52:06
+[2m   Duration [22m 750ms[2m (transform 431ms, setup 0ms, import 597ms, tests 82ms, environment 1ms)[22m
 
 
 ::error file=/home/runner/work/growthscribe-os/growthscribe-os/src/__tests__/autonomous-growth.test.ts,title=src/__tests__/autonomous-growth.test.ts > Hermes autonomous growth > rejects newly introduced percentage claims,line=69,column=23::AssertionError: expected true to be false // Object.is equality%0A%0A- Expected%0A+ Received%0A%0A- false%0A+ true%0A%0A ❯ src/__tests__/autonomous-growth.test.ts:69:23%0A%0A
@@ -181,7 +177,7 @@ computing gzip size...
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 7.36s[39m
+[32m✓ built in 8.76s[39m
 [36mvite v7.3.2 [32mbuilding ssr environment for production...[36m[39m
 transforming...
 [32m✓[39m 3242 modules transformed.
@@ -191,106 +187,106 @@ rendering chunks...
 [2mdist/server/[22m[2massets/[22m[35mstyles-D-Q9Gm7Z.css                             [39m[1m[2m 99.73 kB[22m[1m[22m
 [2mdist/server/[22m[36mindex.js                                               [39m[1m[2m  0.10 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36m__23tanstack-start-plugin-adapters-Cwee5PKy.js  [39m[1m[2m  0.14 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mcheck-DBcfZcK-.js                               [39m[1m[2m  0.21 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mx-DvGMIYsa.js                                   [39m[1m[2m  0.24 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mloader-circle-BSQSBJK8.js                       [39m[1m[2m  0.25 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mplus-BeUu0SAZ.js                                [39m[1m[2m  0.25 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36marrow-right-B5ZoJs6H.js                         [39m[1m[2m  0.28 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36msearch-CcSCpPXZ.js                              [39m[1m[2m  0.28 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtrending-up-IzJGsiMP.js                         [39m[1m[2m  0.29 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mcircle-check-Bi5NLTdQ.js                        [39m[1m[2m  0.30 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mcreateServerRpc-b_D1DacG.js                     [39m[1m[2m  0.31 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mskeleton-DK2styN7.js                            [39m[1m[2m  0.32 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mdownload-Cg6f7gTa.js                            [39m[1m[2m  0.35 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mglobe-DG6m7JC2.js                               [39m[1m[2m  0.36 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mactivity-BIxMcoIq.js                            [39m[1m[2m  0.36 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mexternal-link-DtThozPb.js                       [39m[1m[2m  0.38 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mchart-column-B2wSolGt.js                        [39m[1m[2m  0.38 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mplug-Bc3spEtq.js                                [39m[1m[2m  0.42 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtrending-down-SBKK08dx.js                       [39m[1m[2m  0.43 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mlist-todo-BAn2hnGK.js                           [39m[1m[2m  0.44 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mshield-check-B--xAc5q.js                        [39m[1m[2m  0.46 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mbot-BVa69iU4.js                                 [39m[1m[2m  0.47 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mfile-search-vHnd_OIa.js                         [39m[1m[2m  0.54 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mnetwork-Cp7uZyxb.js                             [39m[1m[2m  0.54 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mfile-text-C7M4LK1U.js                           [39m[1m[2m  0.55 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36museServerFn-BZpogY75.js                         [39m[1m[2m  0.59 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36maudit.functions-CzDGfeOe.js                     [39m[1m[2m  0.63 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36msparkles-BlRlmZlY.js                            [39m[1m[2m  0.65 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mbrief.functions-CU8tlb2P.js                     [39m[1m[2m  0.70 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtextarea-DFoZHTym.js                            [39m[1m[2m  0.73 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36minput-Bf0X3ezJ.js                               [39m[1m[2m  0.83 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcheck-BexaMGoQ.js                               [39m[1m[2m  0.21 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mx-BsjBfiod.js                                   [39m[1m[2m  0.24 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mloader-circle-BboNY1Wg.js                       [39m[1m[2m  0.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplus-D5AKUees.js                                [39m[1m[2m  0.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36marrow-right-1HlTIx_H.js                         [39m[1m[2m  0.28 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msearch-Djc_qzG3.js                              [39m[1m[2m  0.28 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtrending-up-BnVCysQF.js                         [39m[1m[2m  0.29 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcircle-check-CuBLxMDy.js                        [39m[1m[2m  0.30 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcreateServerRpc-B0AOT7hz.js                     [39m[1m[2m  0.31 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mskeleton-Ct6cxrlW.js                            [39m[1m[2m  0.32 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mdownload-CNvA71nR.js                            [39m[1m[2m  0.35 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mglobe-Chn_E_6n.js                               [39m[1m[2m  0.36 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mactivity-CzLHI44M.js                            [39m[1m[2m  0.36 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mexternal-link-BqMe6XAi.js                       [39m[1m[2m  0.38 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mchart-column-BJRYoXDS.js                        [39m[1m[2m  0.38 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplug-CVs16C-E.js                                [39m[1m[2m  0.42 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtrending-down-BWcIBPC3.js                       [39m[1m[2m  0.43 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mlist-todo-DMcWimHc.js                           [39m[1m[2m  0.44 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mshield-check-iKB1GodY.js                        [39m[1m[2m  0.46 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbot-Beawzns-.js                                 [39m[1m[2m  0.47 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mfile-search-Bt8GVtRo.js                         [39m[1m[2m  0.54 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mnetwork-CIgNotCd.js                             [39m[1m[2m  0.54 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mfile-text-k9y4HWJH.js                           [39m[1m[2m  0.55 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36museServerFn-Bc3ORlzy.js                         [39m[1m[2m  0.59 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudit.functions-LFnEx-87.js                     [39m[1m[2m  0.63 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msparkles-BqOhZMC6.js                            [39m[1m[2m  0.65 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbrief.functions-DxKfoy6M.js                     [39m[1m[2m  0.70 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtextarea-2Zvhyvaa.js                            [39m[1m[2m  0.73 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36minput-ZXR2UVZv.js                               [39m[1m[2m  0.83 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36mclient-o1fH1KBy.js                              [39m[1m[2m  0.84 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mbadge-DBLlI4oG.js                               [39m[1m[2m  0.99 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mwand-sparkles-CdaCUCYb.js                       [39m[1m[2m  1.00 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36maudit-logs-B4VKEQPV.js                          [39m[1m[2m  1.20 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtasks-ClUaVkHi.js                               [39m[1m[2m  1.22 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbadge-pnVUKV2u.js                               [39m[1m[2m  0.99 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mwand-sparkles-BUjdnYVe.js                       [39m[1m[2m  1.00 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudit-logs-DICb615a.js                          [39m[1m[2m  1.20 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtasks-BfnDKTMp.js                               [39m[1m[2m  1.22 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36mai-gateway-DTBN9XOq.js                          [39m[1m[2m  1.40 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mjobs.functions-rQHY3SYJ.js                      [39m[1m[2m  1.77 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mcard-BmrnUAGx.js                                [39m[1m[2m  1.78 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mintegrations.functions-W0N1zDtO.js              [39m[1m[2m  1.78 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mlabel-D96esGGe.js                               [39m[1m[2m  1.79 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mstart-DqUcnEAt.js                               [39m[1m[2m  1.82 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mPageHeader-CwTccb4x.js                          [39m[1m[2m  2.03 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36musage.functions-8eGXOpt8.js                     [39m[1m[2m  2.52 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtable-mNKzt09M.js                               [39m[1m[2m  2.65 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mscore-inventory.functions-Bk2IYNOW.js           [39m[1m[2m  2.85 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mjobs.functions-DXQrl31D.js                      [39m[1m[2m  1.77 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcard-BRNeaP6h.js                                [39m[1m[2m  1.78 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mintegrations.functions-DEg4COtF.js              [39m[1m[2m  1.78 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mlabel-Dma3pHY1.js                               [39m[1m[2m  1.79 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mstart-DfuiIiBo.js                               [39m[1m[2m  1.82 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mPageHeader-QH7gkpTw.js                          [39m[1m[2m  2.03 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36musage.functions-zt12rOkM.js                     [39m[1m[2m  2.52 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtable-CXI-dv3n.js                               [39m[1m[2m  2.65 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mscore-inventory.functions-BOo8SR41.js           [39m[1m[2m  2.85 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36mwordpress.server-C9_WSos2.js                    [39m[1m[2m  3.02 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mwordpress.functions-CuaRTnHf.js                 [39m[1m[2m  3.15 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mdialog-DZdGaCVD.js                              [39m[1m[2m  3.41 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36msheet-Dl5ouuUh.js                               [39m[1m[2m  3.86 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36monboarding-CNR2YFMx.js                          [39m[1m[2m  4.01 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mwordpress.functions-B7bJU0en.js                 [39m[1m[2m  3.15 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mdialog-BKRLJ6f2.js                              [39m[1m[2m  3.41 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msheet-Bq5k-Pvx.js                               [39m[1m[2m  3.86 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36monboarding-DPn2-8u6.js                          [39m[1m[2m  4.01 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36mplaybook-presets-D9O9tFn0.js                    [39m[1m[2m  4.46 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mbrief.functions-7mNRHQmo.js                     [39m[1m[2m  4.57 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36maudit.functions-DmNyw16w.js                     [39m[1m[2m  4.81 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-wBf3UJQu.js                               [39m[1m[2m  4.83 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtopical.functions-CXOJylDS.js                   [39m[1m[2m  5.18 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mportfolio.functions-gLXNS4wh.js                 [39m[1m[2m  5.85 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mcompetitor.functions-CFpPx7Tq.js                [39m[1m[2m  6.09 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mlogin-D7GhHc2c.js                               [39m[1m[2m  6.43 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-DvxC5Iih.js                               [39m[1m[2m  6.97 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36msignup-CbIqjQN9.js                              [39m[1m[2m  7.25 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36msettings-FCyAopT4.js                            [39m[1m[2m  7.48 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mapprovals.functions-hZcZN53T.js                 [39m[1m[2m  7.63 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtabs--RBBpCzK.js                                [39m[1m[2m  7.76 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mintegrations.functions-BdC0ioiS.js              [39m[1m[2m  7.90 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbrief.functions-DGtBBWsm.js                     [39m[1m[2m  4.57 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudit.functions-BkqWLtnM.js                     [39m[1m[2m  4.81 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-BQ1tMGwZ.js                               [39m[1m[2m  4.83 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtopical.functions-9VBpZRjy.js                   [39m[1m[2m  5.18 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mportfolio.functions-DWILszHM.js                 [39m[1m[2m  5.85 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcompetitor.functions-CAgunbYj.js                [39m[1m[2m  6.09 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mlogin-DvoFH4-C.js                               [39m[1m[2m  6.43 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-DgwpaT3N.js                               [39m[1m[2m  6.97 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msignup-C7V5T3QN.js                              [39m[1m[2m  7.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msettings-CbczgLFU.js                            [39m[1m[2m  7.48 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mapprovals.functions-BuziKGnn.js                 [39m[1m[2m  7.63 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtabs-DQACPhBp.js                                [39m[1m[2m  7.76 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mintegrations.functions-CEpEDI5M.js              [39m[1m[2m  7.90 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36moauth-CDIaJpel.js                               [39m[1m[2m  8.26 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36mgsc-import.server-BXeBwJ7l.js                   [39m[1m[2m  8.35 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36msites-Ba5MjDDu.js                               [39m[1m[2m  8.79 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-5vUcOouT.js                               [39m[1m[2m  9.18 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mcheckbox-BVdMnO9R.js                            [39m[1m[2m  9.25 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mai-visibility.functions-dJsUwHO8.js             [39m[1m[2m  9.82 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mapprovals-CCVG0x7P.js                           [39m[1m[2m  9.85 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36msites-CiQ-ZoXl.js                               [39m[1m[2m  8.79 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-DdISBuMV.js                               [39m[1m[2m  9.18 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcheckbox-DRkgnRD2.js                            [39m[1m[2m  9.25 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mai-visibility.functions-DI65DzOR.js             [39m[1m[2m  9.82 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mapprovals-BHp2nVYs.js                           [39m[1m[2m  9.85 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36m_tanstack-start-manifest_v-Ct1ShtQg.js          [39m[1m[2m 10.30 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36maudits-V_M_Ur6D.js                              [39m[1m[2m 10.47 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mbriefs-B0i7OfN9.js                              [39m[1m[2m 10.53 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mai-visibility-BO1F_PPo.js                       [39m[1m[2m 11.09 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-D5IRjJ8x.js                               [39m[1m[2m 11.15 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36maudits-JeI6nZkA.js                              [39m[1m[2m 10.47 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mbriefs-CwOKo9Fh.js                              [39m[1m[2m 10.53 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mai-visibility-YID2K_KI.js                       [39m[1m[2m 11.09 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-DZfV6tBB.js                               [39m[1m[2m 11.15 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36mcontent-scoring-CPFuKDQY.js                     [39m[1m[2m 12.24 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mplaybooks.functions-Chi44Z9d.js                 [39m[1m[2m 12.31 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtopical-maps-QjZkXoCZ.js                        [39m[1m[2m 12.90 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mseo-automation.functions-DmFmqgPW.js            [39m[1m[2m 14.55 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-BWELqwbp.js                               [39m[1m[2m 14.68 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-BNX_RXZB.js                               [39m[1m[2m 16.53 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mrecommendations.functions-D8YlbOfV.js           [39m[1m[2m 17.22 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mworker-entry-DcCCU3Hd.js                        [39m[1m[2m 21.67 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mintegrations-D11WC5yZ.js                        [39m[1m[2m 22.69 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mplaybooks-DiJnCXjr.js                           [39m[1m[2m 24.22 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mrecommendations-C9Z6dqa5.js                     [39m[1m[2m 26.33 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mcontent-inventory-DjFrQAFE.js                   [39m[1m[2m 28.09 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mwordpress.functions-CCuTRLB2.js                 [39m[1m[2m 30.57 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtechnical.functions-CgsLi2a7.js                 [39m[1m[2m 30.87 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mtechnical-BpkOFqzx.js                           [39m[1m[2m 32.02 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-CAY6c2HC.js                               [39m[1m[2m 45.19 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mdropdown-menu-Xhm9zUQT.js                       [39m[1m[2m 54.30 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mselect-CcMoQIGf.js                              [39m[1m[2m 58.48 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-D4oOeyKr.js                               [39m[1m[2m 74.64 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mroute-BwNfRldD.js                               [39m[1m[2m 76.55 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mauth-middleware-CvXFJ_PO.js                     [39m[1m[2m110.20 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mindex-BPwkYRsM.js                               [39m[1m[2m344.37 kB[22m[1m[22m
-[2mdist/server/[22m[2massets/[22m[36mrouter-Bl5xF1hn.js                              [39m[1m[2m447.99 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplaybooks.functions-Cetfznux.js                 [39m[1m[2m 12.31 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtopical-maps-DsuG4tvN.js                        [39m[1m[2m 12.90 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mseo-automation.functions-DQWfbuKi.js            [39m[1m[2m 14.55 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-D7jlTTAN.js                               [39m[1m[2m 14.68 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-BazaFpyw.js                               [39m[1m[2m 16.53 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mrecommendations.functions-eJ1XFkwW.js           [39m[1m[2m 17.22 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mworker-entry-Msj6oznx.js                        [39m[1m[2m 21.67 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mintegrations-EVO6MZD_.js                        [39m[1m[2m 22.69 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mplaybooks-DunEv1Tf.js                           [39m[1m[2m 24.22 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mrecommendations-B__lHSjr.js                     [39m[1m[2m 26.33 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mcontent-inventory-C2c1ciDM.js                   [39m[1m[2m 28.09 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mwordpress.functions-BUNZXIWG.js                 [39m[1m[2m 30.57 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtechnical.functions-BalSMm1T.js                 [39m[1m[2m 30.87 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mtechnical-CyjrFJrK.js                           [39m[1m[2m 32.02 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-CXEMZmCg.js                               [39m[1m[2m 45.19 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mdropdown-menu-DQsijjoC.js                       [39m[1m[2m 54.30 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mselect-5T39ab1B.js                              [39m[1m[2m 58.48 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-DxYmDqxK.js                               [39m[1m[2m 74.64 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mroute-ht4bHvjU.js                               [39m[1m[2m 76.55 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mauth-middleware-DE4LKCat.js                     [39m[1m[2m110.20 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mindex-BZi9Qnso.js                               [39m[1m[2m344.37 kB[22m[1m[22m
+[2mdist/server/[22m[2massets/[22m[36mrouter-D6Aq9JtN.js                              [39m[1m[2m447.97 kB[22m[1m[22m
 [2mdist/server/[22m[2massets/[22m[36mindex-DPDW9gTy.js                               [39m[1m[33m707.33 kB[39m[22m
-[2mdist/server/[22m[2massets/[22m[36mserver-CX4bxhET.js                              [39m[1m[33m737.86 kB[39m[22m
-[2mdist/server/[22m[2massets/[22m[36mdashboard-Dg6egtLX.js                           [39m[1m[33m949.71 kB[39m[22m
-[32m✓ built in 7.68s[39m
+[2mdist/server/[22m[2massets/[22m[36mserver-Iu7DyIji.js                              [39m[1m[33m737.86 kB[39m[22m
+[2mdist/server/[22m[2massets/[22m[36mdashboard-y9dYihNH.js                           [39m[1m[33m949.71 kB[39m[22m
+[32m✓ built in 8.68s[39m
 EXIT=0
