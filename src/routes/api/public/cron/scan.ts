@@ -26,7 +26,6 @@ export const Route = createFileRoute("/api/public/cron/scan")({
         const admin = createClient<Database>(url, service, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
-        const db = admin as any; // New autonomy table types are generated after migration deploy.
         const { data: sites, error } = await admin
           .from("sites")
           .select("id, organization_id, owner_id, name, status")
@@ -54,13 +53,13 @@ export const Route = createFileRoute("/api/public/cron/scan")({
             },
           ];
           for (const candidate of jobs) {
-            const { data: existing } = await db
+            const { data: existing } = await admin
               .from("background_jobs")
               .select("id")
               .eq("idempotency_key", candidate.idempotency_key)
               .maybeSingle();
             if (existing) continue;
-            const { error: jobErr } = await db.from("background_jobs").insert({
+            const { error: jobErr } = await admin.from("background_jobs").insert({
               organization_id: s.organization_id,
               site_id: s.id,
               created_by: s.owner_id,
