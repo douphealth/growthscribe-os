@@ -20,6 +20,13 @@ import {
   runCrawlSite,
   type JobRow,
 } from "@/lib/worker-jobs.server";
+import {
+  runAutonomyPortfolio,
+  runAutonomyContentProposal,
+  runAutonomyContentApply,
+  runSocialPlan,
+  runSocialPublish,
+} from "@/lib/autonomous-growth.server";
 
 // Background job worker. Drains the `background_jobs` queue. Triggered every
 // minute by pg_cron (and safe to invoke manually). Atomically claims jobs by
@@ -87,7 +94,7 @@ async function runTechnicalScanJob(
         post_id: p.id,
         category: f.category,
         severity: f.severity,
-        title: `${f.title} \u2014 ${p.title ?? p.url}`,
+        title: `${f.title} — ${p.title ?? p.url}`,
         detail: f.detail,
         suggested_action: f.suggested_action,
         status: "open",
@@ -111,7 +118,7 @@ async function runTechnicalScanJob(
           post_id: post?.id ?? posts[0].id,
           category: f.category,
           severity: f.severity,
-          title: `${f.title} \u2014 ${post?.title ?? url}`,
+          title: `${f.title} — ${post?.title ?? url}`,
           detail: f.detail,
           suggested_action: f.suggested_action,
           status: "open",
@@ -153,6 +160,20 @@ async function dispatch(admin: Admin, job: JobRow) {
     case "crawl.site":
     case "crawl_site":
       return runCrawlSite(admin, job);
+    case "autonomy.portfolio":
+      return runAutonomyPortfolio(admin, job);
+    case "autonomy.content.propose":
+      return runAutonomyContentProposal(admin, job);
+    case "autonomy.content.apply":
+      return runAutonomyContentApply(admin, job);
+    case "social.plan":
+      return runSocialPlan(admin, job);
+    case "social.publish":
+      return runSocialPublish(admin, job);
+    case "playbook.apply":
+      throw new Error(
+        "Legacy playbook.apply is intentionally blocked: route changes through Hermes autonomy so every live write has stale-snapshot, quality, readback and rollback gates",
+      );
     default:
       throw new Error(`Unknown job_type: ${job.job_type}`);
   }
@@ -185,7 +206,7 @@ export const Route = createFileRoute("/api/public/cron/worker")({
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
-        // Reap stuck `running` jobs older than 10 minutes back to failed.
+        // Reap stuck `running` jobs older than 10 minutes back to queued.
         const stuckCutoff = new Date(Date.now() - 10 * 60_000).toISOString();
         await admin
           .from("background_jobs")
