@@ -27,15 +27,23 @@ export type CandidateSignals = {
 export function growthPriorityScore(s: CandidateSignals): number {
   const impressions = Math.min(30, Math.log10(Math.max(1, s.impressions)) * 10);
   const pos = s.averagePosition ?? 100;
-  const positionOpportunity = pos >= 4 && pos <= 20 ? 30 - Math.abs(pos - 9) * 1.5 : pos < 4 ? 8 : 2;
+  const positionOpportunity =
+    pos >= 4 && pos <= 20 ? 30 - Math.abs(pos - 9) * 1.5 : pos < 4 ? 8 : 2;
   const ctr = s.impressions > 0 ? s.clicks / s.impressions : 0;
   const expectedCtr = pos <= 3 ? 0.08 : pos <= 10 ? 0.035 : pos <= 20 ? 0.015 : 0.005;
   const ctrGap = Math.max(0, expectedCtr - ctr) * 400;
   const qualityGap =
-    ((100 - (s.seoScore ?? 60)) + (100 - (s.aeoScore ?? 60)) + (100 - (s.geoScore ?? 60))) / 15;
+    (100 - (s.seoScore ?? 60) + (100 - (s.aeoScore ?? 60)) + (100 - (s.geoScore ?? 60))) / 15;
   const stale = Math.max(0, 70 - (s.freshnessScore ?? 50)) / 5;
   const revenue = s.commercialIntent ? 8 : 0;
-  return Math.round(Math.max(0, Math.min(100, impressions + positionOpportunity + ctrGap + qualityGap + stale + revenue)) * 10) / 10;
+  return (
+    Math.round(
+      Math.max(
+        0,
+        Math.min(100, impressions + positionOpportunity + ctrGap + qualityGap + stale + revenue),
+      ) * 10,
+    ) / 10
+  );
 }
 
 function stripHtml(html: string): string {
@@ -85,12 +93,17 @@ export function validateContentRefresh(input: {
   if (beforeWords >= 300 && afterWords < Math.floor(beforeWords * 0.9)) {
     reasons.push("content shrank by more than 10%");
   }
-  if (/\b(?:todo|tbd|lorem ipsum|placeholder)\b/i.test(input.nextHtml)) reasons.push("placeholder text detected");
+  if (/\b(?:todo|tbd|lorem ipsum|placeholder)\b/i.test(input.nextHtml))
+    reasons.push("placeholder text detected");
   if (/\bas an ai\b/i.test(input.nextHtml)) reasons.push("AI self-reference detected");
-  if (/<script\b|<iframe\b/i.test(input.nextHtml) && !/<script\b|<iframe\b/i.test(input.beforeHtml)) {
+  if (
+    /<script\b|<iframe\b/i.test(input.nextHtml) &&
+    !/<script\b|<iframe\b/i.test(input.beforeHtml)
+  ) {
     reasons.push("new executable/embed markup detected");
   }
-  const testingClaim = /\b(?:i|we|our team)\s+(?:personally\s+)?(?:tested|reviewed hands-on|used for|bought)\b/i;
+  const testingClaim =
+    /\b(?:i|we|our team)\s+(?:personally\s+)?(?:tested|reviewed hands-on|used for|bought)\b/i;
   if (testingClaim.test(input.nextHtml) && !testingClaim.test(input.beforeHtml)) {
     reasons.push("new first-person testing claim detected");
   }
@@ -117,20 +130,25 @@ export function validateContentRefresh(input: {
   });
   const beforeScore = Math.round((before.seo_score + before.aeo_score + before.geo_score) / 3);
   const afterScore = Math.round((after.seo_score + after.aeo_score + after.geo_score) / 3);
-  if (afterScore < beforeScore) reasons.push(`quality score regressed ${beforeScore} -> ${afterScore}`);
-  if (afterScore < input.minimumQualityScore) reasons.push(`quality score ${afterScore} below floor ${input.minimumQualityScore}`);
+  if (afterScore < beforeScore)
+    reasons.push(`quality score regressed ${beforeScore} -> ${afterScore}`);
+  if (afterScore < input.minimumQualityScore)
+    reasons.push(`quality score ${afterScore} below floor ${input.minimumQualityScore}`);
   return { ok: reasons.length === 0, reasons, beforeScore, afterScore, beforeWords, afterWords };
 }
 
-async function enqueueUnique(admin: Admin, row: {
-  organization_id: string;
-  site_id: string;
-  created_by: string;
-  job_type: string;
-  payload?: Record<string, unknown>;
-  priority?: number;
-  idempotency_key: string;
-}) {
+async function enqueueUnique(
+  admin: Admin,
+  row: {
+    organization_id: string;
+    site_id: string;
+    created_by: string;
+    job_type: string;
+    payload?: Record<string, unknown>;
+    priority?: number;
+    idempotency_key: string;
+  },
+) {
   const db = admin as DB;
   const { data: existing } = await db
     .from("background_jobs")
@@ -156,12 +174,15 @@ function daysAgo(days: number): string {
   return new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
 }
 
-export async function runAutonomyPortfolio(admin: Admin, job: {
-  id: string;
-  organization_id: string;
-  site_id: string | null;
-  created_by: string;
-}) {
+export async function runAutonomyPortfolio(
+  admin: Admin,
+  job: {
+    id: string;
+    organization_id: string;
+    site_id: string | null;
+    created_by: string;
+  },
+) {
   if (!job.site_id) throw new Error("autonomy.portfolio requires site_id");
   const db = admin as DB;
   const { data: policy, error: policyError } = await db
@@ -172,12 +193,20 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
     .maybeSingle();
   if (policyError) throw policyError;
   if (!policy || !policy.enabled || policy.kill_switch) {
-    return { blocked: true, reason: !policy ? "policy_missing" : policy.kill_switch ? "kill_switch" : "disabled" };
+    return {
+      blocked: true,
+      reason: !policy ? "policy_missing" : policy.kill_switch ? "kill_switch" : "disabled",
+    };
   }
 
   const { data: run, error: runError } = await db
     .from("autonomy_runs")
-    .insert({ organization_id: job.organization_id, site_id: job.site_id, mode: policy.mode, status: "running" })
+    .insert({
+      organization_id: job.organization_id,
+      site_id: job.site_id,
+      mode: policy.mode,
+      status: "running",
+    })
     .select("id")
     .single();
   if (runError) throw runError;
@@ -206,7 +235,9 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
 
   const { data: posts, error: postsError } = await db
     .from("wordpress_posts")
-    .select("id,url,title,excerpt,content_html,seo_score,aeo_score,geo_score,freshness_score,recommended_action,status")
+    .select(
+      "id,url,title,excerpt,content_html,seo_score,aeo_score,geo_score,freshness_score,recommended_action,status",
+    )
     .eq("organization_id", job.organization_id)
     .eq("site_id", job.site_id)
     .eq("status", "publish")
@@ -221,10 +252,18 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
     .limit(20000);
   if (gscError) throw gscError;
 
-  const byPage = new Map<string, { clicks: number; impressions: number; weightedPos: number; queries: Map<string, number> }>();
+  const byPage = new Map<
+    string,
+    { clicks: number; impressions: number; weightedPos: number; queries: Map<string, number> }
+  >();
   for (const r of gscRows ?? []) {
     if (!r.page) continue;
-    const a = byPage.get(r.page) ?? { clicks: 0, impressions: 0, weightedPos: 0, queries: new Map<string, number>() };
+    const a = byPage.get(r.page) ?? {
+      clicks: 0,
+      impressions: 0,
+      weightedPos: 0,
+      queries: new Map<string, number>(),
+    };
     const imp = Number(r.impressions ?? 0);
     a.clicks += Number(r.clicks ?? 0);
     a.impressions += imp;
@@ -236,10 +275,16 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
   const candidates = (posts ?? [])
     .filter((p: DB) => p.url && p.content_html)
     .map((p: DB) => {
-      const g = byPage.get(p.url) ?? { clicks: 0, impressions: 0, weightedPos: 0, queries: new Map<string, number>() };
+      const g = byPage.get(p.url) ?? {
+        clicks: 0,
+        impressions: 0,
+        weightedPos: 0,
+        queries: new Map<string, number>(),
+      };
       const avgPos = g.impressions ? g.weightedPos / g.impressions : null;
       const title = String(p.title ?? "").toLowerCase();
-      const commercial = /\b(best|review|vs|comparison|buy|price|deal|top|software|tool|shoe|watch)\b/.test(title);
+      const commercial =
+        /\b(best|review|vs|comparison|buy|price|deal|top|software|tool|shoe|watch)\b/.test(title);
       const score = growthPriorityScore({
         impressions: g.impressions,
         clicks: g.clicks,
@@ -250,7 +295,10 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
         freshnessScore: p.freshness_score,
         commercialIntent: commercial,
       });
-      const queries = Array.from(g.queries.entries()).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([q]) => q);
+      const queries = Array.from(g.queries.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 12)
+        .map(([q]) => q);
       return { p, g, avgPos, score, queries, commercial };
     })
     .filter((c: DB) => c.g.impressions >= 20)
@@ -271,7 +319,8 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
         status: "proposed",
         priority_score: top.score,
         confidence: top.g.impressions >= 100 ? 0.9 : 0.75,
-        rationale: "Existing URL with measurable GSC demand and an optimization gap; preserve URL/equity and improve intent satisfaction.",
+        rationale:
+          "Existing URL with measurable GSC demand and an optimization gap; preserve URL/equity and improve intent satisfaction.",
         evidence: {
           clicks28d: top.g.clicks,
           impressions28d: top.g.impressions,
@@ -304,7 +353,11 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
     });
   }
 
-  if (policy.social_provider && Array.isArray(policy.social_networks) && policy.social_networks.length > 0) {
+  if (
+    policy.social_provider &&
+    Array.isArray(policy.social_networks) &&
+    policy.social_networks.length > 0
+  ) {
     await enqueueUnique(admin, {
       organization_id: job.organization_id,
       site_id: job.site_id,
@@ -316,10 +369,19 @@ export async function runAutonomyPortfolio(admin: Admin, job: {
     });
   }
 
-  const decisions = { queuedDiagnostics: queued, contentActionId: actionId, topPriority: top?.score ?? null };
+  const decisions = {
+    queuedDiagnostics: queued,
+    contentActionId: actionId,
+    topPriority: top?.score ?? null,
+  };
   await db
     .from("autonomy_runs")
-    .update({ status: "succeeded", decisions, result: { candidateCount: candidates.length }, finished_at: new Date().toISOString() })
+    .update({
+      status: "succeeded",
+      decisions,
+      result: { candidateCount: candidates.length },
+      finished_at: new Date().toISOString(),
+    })
     .eq("id", run.id);
   return { runId: run.id, ...decisions, candidateCount: candidates.length };
 }
@@ -331,15 +393,19 @@ type RefreshProposal = {
   summary: string;
 };
 
-export async function runAutonomyContentProposal(admin: Admin, job: {
-  organization_id: string;
-  site_id: string | null;
-  created_by: string;
-  payload: unknown;
-}) {
+export async function runAutonomyContentProposal(
+  admin: Admin,
+  job: {
+    organization_id: string;
+    site_id: string | null;
+    created_by: string;
+    payload: unknown;
+  },
+) {
   const db = admin as DB;
   const actionId = (job.payload as { actionId?: string } | null)?.actionId;
-  if (!job.site_id || !actionId) throw new Error("autonomy.content.propose requires site_id+actionId");
+  if (!job.site_id || !actionId)
+    throw new Error("autonomy.content.propose requires site_id+actionId");
   const { data: action, error } = await db
     .from("autonomy_actions")
     .select("*")
@@ -353,9 +419,15 @@ export async function runAutonomyContentProposal(admin: Admin, job: {
     .eq("organization_id", job.organization_id)
     .eq("site_id", job.site_id)
     .single();
-  if (!policy?.enabled || policy.kill_switch) throw new Error("Autonomy policy does not permit proposal");
+  if (!policy?.enabled || policy.kill_switch)
+    throw new Error("Autonomy policy does not permit proposal");
 
-  const before = action.before_snapshot as { url: string; title: string; excerpt: string; contentHtml: string };
+  const before = action.before_snapshot as {
+    url: string;
+    title: string;
+    excerpt: string;
+    contentHtml: string;
+  };
   const evidence = action.evidence ?? {};
   const proposal = await callLovableAIStructured<RefreshProposal>(
     [
@@ -396,7 +468,13 @@ export async function runAutonomyContentProposal(admin: Admin, job: {
   await db
     .from("autonomy_actions")
     .update({
-      proposed_snapshot: { title: proposal.title, excerpt: proposal.excerpt, contentHtml: proposal.content_html, summary: proposal.summary, beforeHash },
+      proposed_snapshot: {
+        title: proposal.title,
+        excerpt: proposal.excerpt,
+        contentHtml: proposal.content_html,
+        summary: proposal.summary,
+        beforeHash,
+      },
       validation,
       status: validation.ok ? "approved" : "rejected",
     })
@@ -416,24 +494,39 @@ export async function runAutonomyContentProposal(admin: Admin, job: {
   return { actionId, validation, mode: policy.mode };
 }
 
-export async function runAutonomyContentApply(admin: Admin, job: {
-  organization_id: string;
-  site_id: string | null;
-  created_by: string;
-  payload: unknown;
-}) {
+export async function runAutonomyContentApply(
+  admin: Admin,
+  job: {
+    organization_id: string;
+    site_id: string | null;
+    created_by: string;
+    payload: unknown;
+  },
+) {
   const db = admin as DB;
   const actionId = (job.payload as { actionId?: string } | null)?.actionId;
-  if (!job.site_id || !actionId) throw new Error("autonomy.content.apply requires site_id+actionId");
+  if (!job.site_id || !actionId)
+    throw new Error("autonomy.content.apply requires site_id+actionId");
   const [{ data: action }, { data: policy }] = await Promise.all([
-    db.from("autonomy_actions").select("*").eq("id", actionId).eq("organization_id", job.organization_id).single(),
-    db.from("autonomy_policies").select("*").eq("organization_id", job.organization_id).eq("site_id", job.site_id).single(),
+    db
+      .from("autonomy_actions")
+      .select("*")
+      .eq("id", actionId)
+      .eq("organization_id", job.organization_id)
+      .single(),
+    db
+      .from("autonomy_policies")
+      .select("*")
+      .eq("organization_id", job.organization_id)
+      .eq("site_id", job.site_id)
+      .single(),
   ]);
   if (!action || !policy) throw new Error("Autonomy action or policy missing");
   if (!policy.enabled || policy.kill_switch || !["canary", "autopilot"].includes(policy.mode)) {
     throw new Error("Live content write blocked by autonomy policy");
   }
-  if (action.status !== "approved") throw new Error(`Action status ${action.status} is not approved`);
+  if (action.status !== "approved")
+    throw new Error(`Action status ${action.status} is not approved`);
   const today = `${ymd()}T00:00:00.000Z`;
   const { count } = await db
     .from("autonomy_actions")
@@ -441,7 +534,8 @@ export async function runAutonomyContentApply(admin: Admin, job: {
     .eq("site_id", job.site_id)
     .in("status", ["applied", "verified"])
     .gte("applied_at", today);
-  if ((count ?? 0) >= policy.daily_content_write_limit) throw new Error("Daily content write limit reached");
+  if ((count ?? 0) >= policy.daily_content_write_limit)
+    throw new Error("Daily content write limit reached");
 
   const { data: post } = await db
     .from("wordpress_posts")
@@ -456,9 +550,20 @@ export async function runAutonomyContentApply(admin: Admin, job: {
   const liveExcerpt = liveBefore.excerpt.raw ?? liveBefore.excerpt.rendered ?? "";
   const liveHtml = liveBefore.content.raw ?? liveBefore.content.rendered ?? "";
   const liveHash = await sha256(`${liveTitle}\n${liveExcerpt}\n${liveHtml}`);
-  const proposed = action.proposed_snapshot as { title: string; excerpt: string; contentHtml: string; beforeHash: string };
+  const proposed = action.proposed_snapshot as {
+    title: string;
+    excerpt: string;
+    contentHtml: string;
+    beforeHash: string;
+  };
   if (!proposed.beforeHash || liveHash !== proposed.beforeHash) {
-    await db.from("autonomy_actions").update({ status: "rejected", validation: { ok: false, reasons: ["live WordPress content changed after proposal"] } }).eq("id", actionId);
+    await db
+      .from("autonomy_actions")
+      .update({
+        status: "rejected",
+        validation: { ok: false, reasons: ["live WordPress content changed after proposal"] },
+      })
+      .eq("id", actionId);
     throw new Error("Stale proposal: live WordPress content changed after proposal");
   }
 
@@ -485,9 +590,21 @@ export async function runAutonomyContentApply(admin: Admin, job: {
     });
     const titleMatches = stripHtml(afterTitle).trim() === stripHtml(proposed.title).trim();
     if (!verify.ok || !titleMatches) {
-      await updateWpPost(conn, post.post_type, post.wp_post_id, { title: liveTitle, excerpt: liveExcerpt, content: liveHtml });
-      await db.from("autonomy_actions").update({ status: "rolled_back", validation: { ...verify, readbackTitleMatches: titleMatches } }).eq("id", actionId);
-      throw new Error(`WordPress validation failed; rolled back: ${verify.reasons.join("; ") || "title mismatch"}`);
+      await updateWpPost(conn, post.post_type, post.wp_post_id, {
+        title: liveTitle,
+        excerpt: liveExcerpt,
+        content: liveHtml,
+      });
+      await db
+        .from("autonomy_actions")
+        .update({
+          status: "rolled_back",
+          validation: { ...verify, readbackTitleMatches: titleMatches },
+        })
+        .eq("id", actionId);
+      throw new Error(
+        `WordPress validation failed; rolled back: ${verify.reasons.join("; ") || "title mismatch"}`,
+      );
     }
 
     const afterHash = await sha256(`${afterTitle}\n${afterExcerpt}\n${afterHtml}`);
@@ -502,8 +619,18 @@ export async function runAutonomyContentApply(admin: Admin, job: {
         asset_blocks_added: ["content_refresh"],
         before_hash: liveHash,
         after_hash: afterHash,
-        before_snapshot: { title: liveTitle, excerpt: liveExcerpt, content: liveHtml, url: post.url },
-        after_snapshot: { title: afterTitle, excerpt: afterExcerpt, content: afterHtml, url: post.url },
+        before_snapshot: {
+          title: liveTitle,
+          excerpt: liveExcerpt,
+          content: liveHtml,
+          url: post.url,
+        },
+        after_snapshot: {
+          title: afterTitle,
+          excerpt: afterExcerpt,
+          content: afterHtml,
+          url: post.url,
+        },
         applied_by: job.created_by,
       })
       .select("id")
@@ -522,8 +649,13 @@ export async function runAutonomyContentApply(admin: Admin, job: {
       .eq("id", actionId);
     return { actionId, changesetId: changeset.id, verified: true };
   } catch (e) {
-    const { data: current } = await db.from("autonomy_actions").select("status").eq("id", actionId).single();
-    if (current?.status === "applying") await db.from("autonomy_actions").update({ status: "failed" }).eq("id", actionId);
+    const { data: current } = await db
+      .from("autonomy_actions")
+      .select("status")
+      .eq("id", actionId)
+      .single();
+    if (current?.status === "applying")
+      await db.from("autonomy_actions").update({ status: "failed" }).eq("id", actionId);
     throw e;
   }
 }
@@ -545,12 +677,15 @@ function formatLocalDateTime(date: Date, timezone: string): string {
 
 type SocialPlan = { posts: Array<{ network: string; text: string }> };
 
-export async function runSocialPlan(admin: Admin, job: {
-  organization_id: string;
-  site_id: string | null;
-  created_by: string;
-  payload: unknown;
-}) {
+export async function runSocialPlan(
+  admin: Admin,
+  job: {
+    organization_id: string;
+    site_id: string | null;
+    created_by: string;
+    payload: unknown;
+  },
+) {
   if (!job.site_id) throw new Error("social.plan requires site_id");
   const db = admin as DB;
   const { data: policy } = await db
@@ -559,8 +694,11 @@ export async function runSocialPlan(admin: Admin, job: {
     .eq("organization_id", job.organization_id)
     .eq("site_id", job.site_id)
     .single();
-  if (!policy?.enabled || policy.kill_switch || !policy.social_provider) return { queued: 0, reason: "social disabled" };
-  const networks = (Array.isArray(policy.social_networks) ? policy.social_networks : []).map(String).slice(0, policy.daily_social_post_limit);
+  if (!policy?.enabled || policy.kill_switch || !policy.social_provider)
+    return { queued: 0, reason: "social disabled" };
+  const networks = (Array.isArray(policy.social_networks) ? policy.social_networks : [])
+    .map(String)
+    .slice(0, policy.daily_social_post_limit);
   if (!networks.length) return { queued: 0, reason: "no networks" };
   const preferred = (job.payload as { preferredPostId?: string } | null)?.preferredPostId;
   let q = db
@@ -632,10 +770,13 @@ export async function runSocialPlan(admin: Admin, job: {
   return { queued, networks };
 }
 
-export async function runSocialPublish(admin: Admin, job: {
-  organization_id: string;
-  site_id: string | null;
-}) {
+export async function runSocialPublish(
+  admin: Admin,
+  job: {
+    organization_id: string;
+    site_id: string | null;
+  },
+) {
   if (!job.site_id) throw new Error("social.publish requires site_id");
   const db = admin as DB;
   const { data: policy } = await db
@@ -647,11 +788,13 @@ export async function runSocialPublish(admin: Admin, job: {
   if (!policy?.enabled || policy.kill_switch || !["canary", "autopilot"].includes(policy.mode)) {
     return { published: 0, reason: "live social publishing blocked by policy" };
   }
-  if (policy.social_provider !== "metricool") throw new Error(`Unsupported social provider: ${policy.social_provider}`);
+  if (policy.social_provider !== "metricool")
+    throw new Error(`Unsupported social provider: ${policy.social_provider}`);
   const token = process.env.METRICOOL_TOKEN;
   const userId = process.env.METRICOOL_USER_ID;
   const blogId = policy.config?.metricool_blog_id;
-  if (!token || !userId || !blogId) throw new Error("Metricool server credentials/blog mapping are not configured");
+  if (!token || !userId || !blogId)
+    throw new Error("Metricool server credentials/blog mapping are not configured");
   const { data: due, error } = await db
     .from("social_outbox")
     .select("*")
@@ -670,9 +813,14 @@ export async function runSocialPublish(admin: Admin, job: {
       await db.from("social_outbox").update({ status: "publishing" }).eq("id", item.id);
       // Metricool requires a future local dateTime. Keep a 5-minute buffer even
       // when the local outbox item is already due.
-      const remoteDate = new Date(Math.max(Date.now() + 5 * 60_000, new Date(item.scheduled_at).getTime()));
+      const remoteDate = new Date(
+        Math.max(Date.now() + 5 * 60_000, new Date(item.scheduled_at).getTime()),
+      );
       const body = {
-        publicationDate: { dateTime: formatLocalDateTime(remoteDate, policy.timezone), timezone: policy.timezone },
+        publicationDate: {
+          dateTime: formatLocalDateTime(remoteDate, policy.timezone),
+          timezone: policy.timezone,
+        },
         text: item.text,
         providers: [{ network: item.network }],
         autoPublish: true,
@@ -680,27 +828,40 @@ export async function runSocialPublish(admin: Admin, job: {
         shortener: false,
         saveExternalMediaFiles: false,
       };
-      const res = await fetch(`https://app.metricool.com/api/v2/scheduler/posts?blogId=${encodeURIComponent(String(blogId))}&userId=${encodeURIComponent(String(userId))}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Mc-Auth": token },
-        body: JSON.stringify(body),
-      });
+      const res = await fetch(
+        `https://app.metricool.com/api/v2/scheduler/posts?blogId=${encodeURIComponent(String(blogId))}&userId=${encodeURIComponent(String(userId))}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Mc-Auth": token },
+          body: JSON.stringify(body),
+        },
+      );
       const raw = await res.text();
       let parsed: DB = { raw: raw.slice(0, 2000) };
-      try { parsed = JSON.parse(raw); } catch { /* keep safe text */ }
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        /* keep safe text */
+      }
       if (!res.ok) throw new Error(`Metricool HTTP ${res.status}: ${raw.slice(0, 300)}`);
       const providerPostId = String(parsed?.id ?? parsed?.postId ?? parsed?.data?.id ?? "");
-      await db.from("social_outbox").update({
-        status: "scheduled",
-        provider_post_id: providerPostId || null,
-        provider_response: parsed as Json,
-        last_error: null,
-      }).eq("id", item.id);
+      await db
+        .from("social_outbox")
+        .update({
+          status: "scheduled",
+          provider_post_id: providerPostId || null,
+          provider_response: parsed as Json,
+          last_error: null,
+        })
+        .eq("id", item.id);
       published++;
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       failures.push({ id: item.id, error: message });
-      await db.from("social_outbox").update({ status: "failed", last_error: message.slice(0, 500) }).eq("id", item.id);
+      await db
+        .from("social_outbox")
+        .update({ status: "failed", last_error: message.slice(0, 500) })
+        .eq("id", item.id);
     }
   }
   return { scheduled: published, failed: failures.length, failures };
