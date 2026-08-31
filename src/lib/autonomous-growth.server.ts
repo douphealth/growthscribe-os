@@ -107,7 +107,7 @@ export function validateContentRefresh(input: {
   if (testingClaim.test(input.nextHtml) && !testingClaim.test(input.beforeHtml)) {
     reasons.push("new first-person testing claim detected");
   }
-  const newNumericClaims = (input.nextHtml.match(/\b\d+(?:\.\d+)?%\b/g) ?? []).filter(
+  const newNumericClaims = (input.nextHtml.match(/\b\d+(?:\.\d+)?%/g) ?? []).filter(
     (claim) => !input.beforeHtml.includes(claim),
   );
   if (newNumericClaims.length > 0) reasons.push("new percentage claim detected");
@@ -640,7 +640,11 @@ export async function runAutonomyContentApply(
       .from("autonomy_actions")
       .update({
         status: "verified",
-        after_snapshot: { title: afterTitle, excerpt: afterExcerpt, contentHtml: afterHtml },
+        after_snapshot: {
+          title: afterTitle,
+          excerpt: afterExcerpt,
+          contentHtml: afterHtml,
+        },
         validation: { ...verify, readbackTitleMatches: true },
         changeset_id: changeset.id,
         applied_at: new Date().toISOString(),
